@@ -6,14 +6,15 @@ import { Metadata } from "next";
 import Image from "next/image";
 
 interface LookupPageProps {
-  searchParams: { query?: string };
+  searchParams: Promise<{ query?: string }>;
 }
 
 export async function generateMetadata({
   searchParams,
 }: LookupPageProps): Promise<Metadata> {
+  const query = (await searchParams).query;
   return {
-    title: `${searchParams.query || "Error"} | FiveM Server Lookup`,
+    title: `${query || "Error"} | FiveM Server Lookup`,
   };
 }
 
@@ -32,7 +33,7 @@ async function fetchDataFromAPI(query: string) {
 }
 
 const LookupPage = async ({ searchParams }: LookupPageProps) => {
-  const lookupQuery = searchParams.query || "";
+  const lookupQuery = (await searchParams).query || "";
 
   const data = lookupQuery ? await fetchDataFromAPI(lookupQuery) : undefined;
 
