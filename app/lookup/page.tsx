@@ -52,7 +52,7 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
           <img
             src={data.vars.banner_detail}
             alt="Banner"
-            className="rounded-t-md max-h-24"
+            className="rounded-t-md max-h-full aspect-auto"
           />
         )}
         <div className="flex flex-col gap-4 px-8 py-4 rounded-b-md">
@@ -65,7 +65,7 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
                 <div className="h-[1px] w-full bg-[#999] rounded-lg" />
               </>
             )}
-            <div className="flex justify-between gap-4">
+            <div className="flex flex-col sm:flex-row justify-center sm:justify-between gap-4">
               {data.iconVersion && (
                 <Image
                   src={`https://servers-frontend.fivem.net/api/servers/icon/${lookupQuery}/${data.iconVersion}.png`}
