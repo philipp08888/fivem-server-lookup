@@ -4,6 +4,7 @@ import { formatToHTMLColor } from "@/src/utils/formatToHTMLColor";
 import { getFlagEmoji } from "@/src/utils/getFlagEmoji";
 import { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 interface LookupPageProps {
   searchParams: Promise<{ query?: string }>;
@@ -43,7 +44,7 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
 
   return (
     <>
-      <div className="flex flex-col gap-0 max-w-[1000px] w-full bg-[#333] mx-auto mt-8 rounded-md">
+      <div className="flex flex-col gap-0 max-w-[1000px] w-full bg-[#333] mx-auto mt-4 rounded-md shadow-bg">
         {data.vars && data.vars.banner_detail && (
           <img
             src={data.vars.banner_detail}
@@ -84,23 +85,50 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
           </div>
           <div>
             <p className="text-xs text-[#999] uppercase">Information</p>
-            {data.upvotePower > 0 && (
-              <div className="flex flex-row gap-1 items-center">
-                <p>🚀 {data.upvotePower} Upvotes</p>
-                <InformativeTooltip>
-                  An upvote costs 5.95 euros (
-                  <a
-                    href="https://zap-hosting.com/en/shop/product/fivem-upvotes/"
-                    rel="noopener noreferrer"
-                  >
-                    zap-hosting.com
-                  </a>
-                  ) <br />
-                  {data.upvotePower} Upvotes x 5,95€ = {data.upvotePower * 5.6}{" "}
-                  €
-                </InformativeTooltip>
-              </div>
-            )}
+            <div className="flex flex-row justify-between">
+              {data.upvotePower > 0 && (
+                <div className="flex flex-row gap-1 items-center">
+                  <p>🚀 {data.upvotePower} Upvotes</p>
+                  <InformativeTooltip>
+                    An upvote costs 5.95 euros (
+                    <a
+                      href="https://zap-hosting.com/en/shop/product/fivem-upvotes/"
+                      rel="noopener noreferrer"
+                    >
+                      zap-hosting.com
+                    </a>
+                    ) <br />
+                    {data.upvotePower} Upvotes x 5,95€ ={" "}
+                    {Math.round(data.upvotePower * 5.6)} €
+                  </InformativeTooltip>
+                </div>
+              )}
+              {data.vars?.sv_enforceGameBuild && (
+                <div className="flex flex-row gap-1 items-center">
+                  <p>🎮 Game Build {data.vars.sv_enforceGameBuild}</p>
+                  <InformativeTooltip>
+                    The sv_enforceGameBuild setting sets the game version for
+                    the server and thus makes it possible to access new DLC
+                    content such as cars, weapons or interiors.
+                    <br />
+                    You can find a list of the game versions currently supported
+                    by FiveM here:{" "}
+                    <Link href="https://zap-hosting.com/guides/docs/fivem-gamebuild/#available-gamebuilds">
+                      Game Builds
+                    </Link>
+                  </InformativeTooltip>
+                </div>
+              )}
+              {data.server && (
+                <div className="flex flex-row gap-1 items-center">
+                  <p>{data.server}</p>
+                  <InformativeTooltip>
+                    The server data point usually tells you which operating
+                    system the respective server is running on
+                  </InformativeTooltip>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

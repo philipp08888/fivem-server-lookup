@@ -15,4 +15,5 @@ export interface ServerData {
   ownerAvatar?: string;
   players: ServerDataPlayer[];
   connectEndPoints: string[];
+  server?: string;
 }

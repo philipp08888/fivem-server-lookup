@@ -44,7 +44,7 @@ export const Tooltip = ({
       {children}
       {isVisible && (
         <div
-          className={`absolute whitespace-nowrap bg-[#222] text-white text-sm py-1 px-2 rounded shadow-lg left-full top-1/2 transform -translate-y-1/2 ml-2 ${tooltipPositions[position]}`}
+          className={`absolute whitespace-nowrap bg-[#222] text-white text-sm py-1 px-2 rounded shadow-lg max-w-16 text-wrap md:max-w-sm ${tooltipPositions[position]}`}
           onMouseEnter={showTooltip}
           onMouseLeave={hideTooltip}
         >
