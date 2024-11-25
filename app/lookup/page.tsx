@@ -1,3 +1,4 @@
+import { Error } from "@/src/components/Error";
 import { InformativeTooltip } from "@/src/components/InformativeTooltip";
 import { ServerData } from "@/src/types/ServerData";
 import { formatToHTMLColor } from "@/src/utils/formatToHTMLColor";
@@ -39,7 +40,9 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
   const data = lookupQuery ? await fetchDataFromAPI(lookupQuery) : undefined;
 
   if (!data) {
-    return <h1>Error while loading server</h1>;
+    return (
+      <Error message="Error while loading server lookup! Please try again!" />
+    );
   }
 
   return (
@@ -49,7 +52,7 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
           <img
             src={data.vars.banner_detail}
             alt="Banner"
-            className="rounded-t-md"
+            className="rounded-t-md max-h-24"
           />
         )}
         <div className="flex flex-col gap-4 px-8 py-4 rounded-b-md">
@@ -85,7 +88,7 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
           </div>
           <div>
             <p className="text-xs text-[#999] uppercase">Information</p>
-            <div className="flex flex-row justify-between">
+            <div className="flex flex-row justify-between flex-wrap">
               {data.upvotePower > 0 && (
                 <div className="flex flex-row gap-1 items-center">
                   <p>🚀 {data.upvotePower} Upvotes</p>

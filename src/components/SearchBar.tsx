@@ -33,7 +33,10 @@ export const SearchBar = (): React.JSX.Element => {
           onChange={(e) => setServerUrl(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <MagnifyingGlassIcon className="size-4" onClick={startSearch} />
+        <MagnifyingGlassIcon
+          className="size-4 cursor-pointer"
+          onClick={startSearch}
+        />
       </div>
     </>
   );
