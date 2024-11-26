@@ -1,9 +1,10 @@
+import { Container } from "@/src/components/layout/Container";
 import { Tag } from "@/src/components/Tag";
 import Link from "next/link";
 
 export default async function Page() {
   return (
-    <div className="flex flex-col gap-4">
+    <Container className="px-8 py-4 gap-2">
       <div className="flex flex-col gap-2 mt-4">
         <Tag>How To - Explanation</Tag>
         <p>
@@ -26,6 +27,6 @@ export default async function Page() {
           Discord
         </Link>
       </div>
-    </div>
+    </Container>
   );
 }

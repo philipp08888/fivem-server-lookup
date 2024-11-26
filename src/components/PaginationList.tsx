@@ -53,7 +53,7 @@ export const PaginationList = <T,>({
         placeholder="Search..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="mb-4 p-2 rounded bg-[#444] outline-none shadow-bg"
+        className="mb-4 p-2 rounded bg-[#444] outline-none shadow-bg select-none"
       />
       <ul
         className={`flex flex-col gap-2`}
