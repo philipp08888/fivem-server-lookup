@@ -7,4 +7,5 @@ export interface ServerDataVars {
   tags?: string[];
   sv_enforceGameBuild?: string;
   banner_detail?: string;
+  lookup?: boolean;
 }

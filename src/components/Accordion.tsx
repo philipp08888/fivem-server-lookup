@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { motion } from "motion/react";
 import { ReactNode, useState } from "react";
 
 interface AccordionProps {
@@ -11,33 +12,30 @@ interface AccordionProps {
 export const Accordion = ({ title, children }: AccordionProps) => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
-  const toggleAccordion = () => setOpen((prevState) => !prevState);
-
   return (
-    <div className="flex flex-col gap-2 justify-center">
+    <div className="flex flex-col justify-center">
       <div
         className="flex justify-between items-center cursor-pointer"
-        onClick={toggleAccordion}
+        onClick={() => setOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-controls="accordion-content"
       >
-        {title}
-        {isOpen ? (
-          <ChevronUpIcon className="size-4" />
-        ) : (
-          <ChevronDownIcon className="size-4" />
-        )}
-      </div>
-      {isOpen && (
-        <div
-          id="accordion-content"
-          className={`transition-all duration-300 ease-in-out ${
-            !isOpen ? "max-h-0" : ""
-          }`}
+        <div className="flex-1 flex items-center">{title}</div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
         >
-          {children}
-        </div>
-      )}
+          <ChevronDownIcon className="size-4" />
+        </motion.div>
+      </div>
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        style={{ overflow: "hidden" }}
+      >
+        <div className="p-2">{children}</div>
+      </motion.div>
     </div>
   );
 };

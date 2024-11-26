@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 
 interface PaginationListProps<T> {
@@ -55,14 +56,32 @@ export const PaginationList = <T,>({
         onChange={(e) => setSearchQuery(e.target.value)}
         className="mb-4 p-2 rounded bg-[#444] outline-none shadow-bg select-none"
       />
-      <ul
-        className={`flex flex-col gap-2`}
-        style={{ minHeight: `${containerHeight}px` }}
-      >
-        {currentItem.map((item, index) => (
-          <li key={start + index}>{renderItem(item, start + index)}</li>
-        ))}
-      </ul>
+
+      <div style={{ minHeight: `${containerHeight}px` }}>
+        <AnimatePresence mode="wait">
+          <motion.ul
+            className="flex flex-col gap-2"
+            key={currentPage}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+          >
+            {currentItem.map((item, index) => (
+              <motion.li
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                key={start + index}
+              >
+                {renderItem(item, start + index)}
+              </motion.li>
+            ))}
+          </motion.ul>
+        </AnimatePresence>
+      </div>
+
       <div className="flex justify-between mt-4">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}

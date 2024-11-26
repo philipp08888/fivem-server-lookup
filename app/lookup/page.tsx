@@ -42,10 +42,7 @@ export async function generateMetadata({
  */
 async function fetchDataFromAPI(query: string) {
   const request = await fetch(
-    `https://servers-frontend.fivem.net/api/servers/single/${query}`,
-    {
-      cache: "force-cache",
-    }
+    `https://servers-frontend.fivem.net/api/servers/single/${query}`
   );
 
   const { Data: data }: { Data: ServerData } = await request.json();
@@ -63,6 +60,10 @@ const Page = async ({ searchParams }: LookupPageProps) => {
 
   if (!data) {
     notFound();
+  }
+
+  if (data.vars.lookup !== undefined && data.vars.lookup) {
+    return <Error message="Lookups for this server are disabled." />;
   }
 
   return (
