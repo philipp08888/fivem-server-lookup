@@ -5,7 +5,10 @@ import Link from "next/link";
 
 export const Logo = () => {
   return (
-    <Link className="flex w-full justify-center py-4" href="/">
+    <Link
+      className="flex w-full justify-center py-4 max-w-[250px] mx-auto"
+      href="/"
+    >
       <Image
         src="/logo.svg"
         alt="Logo"

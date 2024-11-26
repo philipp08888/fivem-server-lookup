@@ -40,6 +40,7 @@ export const SearchBar = (): React.JSX.Element => {
           className="size-4 cursor-pointer"
           onClick={startSearch}
           tabIndex={0}
+          aria-hidden
         />
       </div>
       {error && <p className="text-red-500 mt-2">{error}</p>}
