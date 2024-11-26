@@ -16,6 +16,10 @@ export default {
       boxShadow: {
         bg: "rgba(255, 255, 255, 0.145) 0px 0px 0px 1px, rgba(0, 0, 0, 0.16) 0px 1px 2px 0px",
       },
+      fontFamily: {
+        sans: ["geistSans", "sans-serif"],
+        mono: ["geistMono", "monospace"],
+      },
     },
   },
   safelist: [
