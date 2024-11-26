@@ -1,11 +1,17 @@
+import { Divider } from "@/src/components/Divider";
 import { Error } from "@/src/components/Error";
 import { InformativeTooltip } from "@/src/components/InformativeTooltip";
+import { Container } from "@/src/components/layout/Container";
+import { PlayerSection } from "@/src/components/sections/PlayerSection";
+import { ResourceSection } from "@/src/components/sections/ResourceSection";
+import { Tag } from "@/src/components/Tag";
 import { ServerData } from "@/src/types/ServerData";
 import { formatToHTMLColor } from "@/src/utils/formatToHTMLColor";
 import { getFlagEmoji } from "@/src/utils/getFlagEmoji";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface LookupPageProps {
   searchParams: Promise<{ query?: string }>;
@@ -15,8 +21,17 @@ export async function generateMetadata({
   searchParams,
 }: LookupPageProps): Promise<Metadata> {
   const query = (await searchParams).query;
+
+  if (!query) {
+    return {
+      title: `Error | FiveM Server Lookup`,
+    };
+  }
+
+  const data = await fetchDataFromAPI(query);
+
   return {
-    title: `${query || "Error"} | FiveM Server Lookup`,
+    title: `${data.hostname} | FiveM Server Lookup`,
   };
 }
 
@@ -27,27 +42,32 @@ export async function generateMetadata({
  */
 async function fetchDataFromAPI(query: string) {
   const request = await fetch(
-    `https://servers-frontend.fivem.net/api/servers/single/${query}`
+    `https://servers-frontend.fivem.net/api/servers/single/${query}`,
+    {
+      cache: "force-cache",
+    }
   );
 
   const { Data: data }: { Data: ServerData } = await request.json();
   return data;
 }
 
-const LookupPage = async ({ searchParams }: LookupPageProps) => {
-  const lookupQuery = (await searchParams).query || "";
+const Page = async ({ searchParams }: LookupPageProps) => {
+  const query = (await searchParams).query;
 
-  const data = lookupQuery ? await fetchDataFromAPI(lookupQuery) : undefined;
+  if (!query) {
+    return <Error message="Please provide an FiveM Server Id!" />;
+  }
+
+  const data = await fetchDataFromAPI(query);
 
   if (!data) {
-    return (
-      <Error message="Error while loading server lookup! Please try again!" />
-    );
+    notFound();
   }
 
   return (
     <>
-      <div className="flex flex-col gap-0 max-w-[1000px] w-full bg-[#333] mx-auto mt-4 rounded-md shadow-bg">
+      <Container>
         {data.vars && data.vars.banner_detail && (
           <img
             src={data.vars.banner_detail}
@@ -62,13 +82,13 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
                 <p className="text-sm">
                   {formatToHTMLColor(data.vars.sv_projectName)}
                 </p>
-                <div className="h-[1px] w-full bg-[#999] rounded-lg" />
+                <Divider />
               </>
             )}
             <div className="flex flex-col sm:flex-row justify-center sm:justify-between gap-4">
               {data.iconVersion && (
                 <Image
-                  src={`https://servers-frontend.fivem.net/api/servers/icon/${lookupQuery}/${data.iconVersion}.png`}
+                  src={`https://servers-frontend.fivem.net/api/servers/icon/${query}/${data.iconVersion}.png`}
                   className="rounded-md"
                   alt="Server Icon"
                   width={128}
@@ -87,7 +107,7 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
             </div>
           </div>
           <div>
-            <p className="text-xs text-[#999] uppercase">Information</p>
+            <Tag>Information</Tag>
             <div className="flex flex-row justify-between flex-wrap">
               {data.upvotePower > 0 && (
                 <div className="flex flex-row gap-1 items-center">
@@ -134,9 +154,15 @@ const LookupPage = async ({ searchParams }: LookupPageProps) => {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
+      {data.players && data.players.length > 0 && (
+        <PlayerSection players={data.players} />
+      )}
+      {data.resources && data.resources.length > 0 && (
+        <ResourceSection resources={data.resources} />
+      )}
     </>
   );
 };
 
-export default LookupPage;
+export default Page;
