@@ -32,8 +32,8 @@ export default async function Page() {
       <Container className="px-8 py-4">
         <Tag>info for server admins</Tag>
         <p>
-          You don't want your server to be accessible here via a lookup? Then
-          you have to set a convar in the server.cfg: <br />
+          You don&lsquo;t want your server to be accessible here via a lookup?
+          Then you have to set a convar in the server.cfg: <br />
           <code className="bg-black">set lookup false</code>
         </p>
       </Container>
