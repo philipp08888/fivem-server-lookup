@@ -8,12 +8,15 @@ const ID_REGEX = /(?:cfx\.re\/(?:join\/)?)?([a-zA-Z0-9]+)/;
 
 export const SearchBar = (): React.JSX.Element => {
   const [serverUrl, setServerUrl] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const startSearch = useCallback(() => {
     const match = serverUrl.trim().match(ID_REGEX);
     if (match) {
       router.push(`/lookup?query=${encodeURIComponent(match[1])}`);
+    } else {
+      setError("Invalid Server-Id");
     }
   }, [router, serverUrl]);
 
@@ -36,8 +39,10 @@ export const SearchBar = (): React.JSX.Element => {
         <MagnifyingGlassIcon
           className="size-4 cursor-pointer"
           onClick={startSearch}
+          tabIndex={0}
         />
       </div>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </>
   );
 };
