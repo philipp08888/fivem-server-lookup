@@ -1,5 +1,6 @@
 import { Divider } from "@/src/components/Divider";
 import { Error } from "@/src/components/Error";
+import { ImageWithFallback } from "@/src/components/ImageWithFallback";
 import { InformativeTooltip } from "@/src/components/InformativeTooltip";
 import { Container } from "@/src/components/layout/Container";
 import { PlayerSection } from "@/src/components/sections/PlayerSection";
@@ -9,7 +10,6 @@ import { ServerData } from "@/src/types/ServerData";
 import { formatToHTMLColor } from "@/src/utils/formatToHTMLColor";
 import { getFlagEmoji } from "@/src/utils/getFlagEmoji";
 import { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -29,6 +29,12 @@ export async function generateMetadata({
   }
 
   const data = await fetchDataFromAPI(query);
+
+  if (!data) {
+    return {
+      title: `Unknown | FiveM Server Lookup`,
+    };
+  }
 
   return {
     title: `${data.hostname} | FiveM Server Lookup`,
@@ -70,10 +76,21 @@ const Page = async ({ searchParams }: LookupPageProps) => {
     <>
       <Container>
         {data.vars && data.vars.banner_detail && (
-          <img
-            src={data.vars.banner_detail}
+          <ImageWithFallback
+            src={`/api/image-proxy?url=${encodeURIComponent(
+              data.vars.banner_detail
+            )}`}
+            fallbackSrc="/no-banner.svg"
             alt="Banner"
             className="rounded-t-md max-h-full aspect-auto"
+            sizes="100vw"
+            width={1920}
+            height={1080}
+            style={{
+              width: "100%",
+              height: "auto",
+            }}
+            priority
           />
         )}
         <div className="flex flex-col gap-4 px-8 py-4 rounded-b-md">
@@ -88,12 +105,18 @@ const Page = async ({ searchParams }: LookupPageProps) => {
             )}
             <div className="flex flex-col sm:flex-row justify-center sm:justify-between gap-4">
               {data.iconVersion && (
-                <Image
+                <ImageWithFallback
                   src={`https://servers-frontend.fivem.net/api/servers/icon/${query}/${data.iconVersion}.png`}
                   className="rounded-md"
                   alt="Server Icon"
-                  width={128}
-                  height={128}
+                  priority
+                  width={1920}
+                  height={1080}
+                  fallbackSrc="/no-icon.svg"
+                  style={{
+                    width: 128,
+                    height: 128,
+                  }}
                 />
               )}
               <p className="overflow-hidden text-xl">
