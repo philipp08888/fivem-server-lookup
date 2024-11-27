@@ -90,7 +90,6 @@ const Page = async ({ searchParams }: LookupPageProps) => {
               width: "100%",
               height: "auto",
             }}
-            priority
           />
         )}
         <div className="flex flex-col gap-4 px-8 py-4 rounded-b-md">
@@ -109,7 +108,6 @@ const Page = async ({ searchParams }: LookupPageProps) => {
                   src={`https://servers-frontend.fivem.net/api/servers/icon/${query}/${data.iconVersion}.png`}
                   className="rounded-md"
                   alt="Server Icon"
-                  priority
                   width={1920}
                   height={1080}
                   fallbackSrc="/no-icon.svg"
