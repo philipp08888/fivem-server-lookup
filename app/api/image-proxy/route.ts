@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 /* TODO: Extend whitelist or find better option for secure image proxy use  */
 const allowedDomains = ["imgur.com", "cdn.discordapp.com", "r2.fivemanage.com"];
 const allowedContentTypes = [
@@ -11,43 +13,28 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const providedImageUrl = searchParams.get("url");
 
+  console.log(request.url);
+
   if (!providedImageUrl) {
-    return new Response(
-      JSON.stringify({
-        error: "Please provide a valid image",
-      }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      }
+    return NextResponse.json(
+      { error: "Please provide a valid image url" },
+      { status: 400 }
     );
   }
 
   const imageUrl = new URL(providedImageUrl);
 
   if (!allowedDomains.some((domain) => imageUrl.hostname.endsWith(domain))) {
-    return new Response(
-      JSON.stringify({
-        error: "This domain is not allowed",
-      }),
-      {
-        status: 403,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+    return NextResponse.json(
+      { error: "This domain is not allowed." },
+      { status: 403 }
     );
   }
 
   if (imageUrl.protocol !== "https:") {
-    return new Response(
-      JSON.stringify({ error: "Please use https as protocol" }),
-      {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+    return NextResponse.json(
+      { error: "Please use https as protocol" },
+      { status: 400 }
     );
   }
 
@@ -65,27 +52,29 @@ export async function GET(request: Request) {
     clearTimeout(timeout);
 
     if (!response.ok) {
-      throw new Error("Failed to fetch image from url");
+      return NextResponse.json(
+        { error: "Failed to fetch image from url" },
+        { status: 500 }
+      );
     }
 
     const contentType = response.headers.get("content-type");
 
     if (!contentType || !allowedContentTypes.includes(contentType)) {
-      return new Response(JSON.stringify({ error: "Invalid content type" }), {
-        status: 400,
-      });
+      return NextResponse.json(
+        { error: "Invalid content type" },
+        { status: 400 }
+      );
     }
 
-    const maxSize = 5 * 1024 * 1024;
+    const maxSize = 32 * 1024 * 1024;
     const contentLength = response.headers.get("content-length");
 
     if (contentLength && parseInt(contentLength, 10) > maxSize) {
-      return new Response(JSON.stringify({ error: "Image too large" }), {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      return NextResponse.json(
+        { error: "Image too large (max 25mb)" + contentLength },
+        { status: 400 }
+      );
     }
 
     const imageBuffer = await response.arrayBuffer();
@@ -98,14 +87,9 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("Image fetching error:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Request timed out or failed",
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+    return NextResponse.json(
+      { error: "Request timed out or failed" },
+      { status: 500 }
     );
   }
 }

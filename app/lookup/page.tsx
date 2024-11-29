@@ -77,21 +77,23 @@ const Page = async ({ searchParams }: LookupPageProps) => {
     <>
       <Container>
         {data.vars && data.vars.banner_detail && (
-          <ImageWithFallback
-            src={`/api/image-proxy?url=${encodeURIComponent(
-              data.vars.banner_detail
-            )}`}
-            fallbackSrc="/no-banner.svg"
-            alt="Banner"
-            className="rounded-t-md max-h-full aspect-auto"
-            sizes="100vw"
-            width={1920}
-            height={1080}
-            style={{
-              width: "100%",
-              height: "auto",
-            }}
-          />
+          <div className="w-full bg-black">
+            <ImageWithFallback
+              src={`/api/image-proxy?url=${encodeURIComponent(
+                data.vars.banner_detail
+              )}`}
+              fallbackSrc="/no-banner.svg"
+              alt="Banner"
+              className="rounded-t-md max-h-full aspect-auto"
+              sizes="100vw"
+              width={1920}
+              height={1080}
+              style={{
+                width: "100%",
+                height: "auto",
+              }}
+            />
+          </div>
         )}
         <div className="flex flex-col gap-4 px-8 py-4 rounded-b-md">
           <div className="flex flex-col gap-2">
