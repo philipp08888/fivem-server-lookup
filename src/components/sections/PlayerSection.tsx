@@ -1,7 +1,7 @@
 "use client";
 
+import { getPingColor } from "@/src/functions/getPingColor";
 import { ServerDataPlayer } from "@/src/types/ServerDataPlayer";
-import { getPingColor } from "@/src/utils/getPingColor";
 import { Accordion } from "../Accordion";
 import { Container } from "../layout/Container";
 import { PaginationList } from "../PaginationList";
@@ -18,7 +18,7 @@ export const PlayerSection = ({ players }: { players: ServerDataPlayer[] }) => {
           renderItem={(player) => (
             <div className="flex justify-between items-center py-2 px-4 bg-[#444] shadow-bg rounded-sm">
               <div className="flex flex-row gap-1 items-center">
-                <span className="font-mono text-[#ccc] text-xs select-none">
+                <span className="font-mono text-[#aaa] text-xs select-none w-12 text-right">
                   {player.id} |
                 </span>
                 {player.name}
