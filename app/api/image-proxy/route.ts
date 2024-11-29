@@ -25,8 +25,6 @@ export async function GET(request: Request) {
 
   const imageUrl = new URL(providedImageUrl);
 
-  console.log(imageUrl.hostname);
-
   if (!allowedDomains.some((domain) => imageUrl.hostname.endsWith(domain))) {
     return new Response(
       JSON.stringify({

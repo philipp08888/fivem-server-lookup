@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { isDefined } from "../functions/isDefined";
 import { InformativeTooltip } from "./InformativeTooltip";
+import { Tag } from "./Tag";
 
 interface ColumnProps {
   name: string;
@@ -17,7 +18,7 @@ export const Column = ({
 }: ColumnProps): React.JSX.Element => {
   return (
     <div className="flex flex-col">
-      <div className="select-none text-[#999] text-xs">{name}</div>
+      <Tag>{name}</Tag>
       <div className="flex flex-row gap-1">
         {value}
         {isDefined(tooltip) && (

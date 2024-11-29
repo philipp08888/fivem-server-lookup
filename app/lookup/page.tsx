@@ -5,6 +5,7 @@ import { ImageWithFallback } from "@/src/components/ImageWithFallback";
 import { Container } from "@/src/components/layout/Container";
 import { PlayerSection } from "@/src/components/sections/PlayerSection";
 import { ResourceSection } from "@/src/components/sections/ResourceSection";
+import { Tag } from "@/src/components/Tag";
 import { formatToHTMLColor } from "@/src/functions/formatToHTMLColor";
 import { getFlagEmoji } from "@/src/functions/getFlagEmoji";
 import { getUpvoteTooltip } from "@/src/functions/getUpvoteTooltip";
@@ -146,6 +147,18 @@ const Page = async ({ searchParams }: LookupPageProps) => {
               <Column name="Game Build" value={data.vars.sv_enforceGameBuild} />
             )}
           </div>
+          {isDefined(data.vars.tags) && data.vars.tags.length > 0 && (
+            <div className="flex flex-col gap-1">
+              <Tag>Tags</Tag>
+              <div className="flex flex-row gap-2">
+                {data.vars.tags.split(",").map((tag) => (
+                  <span className="rounded-md bg-[#888] text-sm px-2 py-1">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </Container>
       {data.players && data.players.length > 0 && (
