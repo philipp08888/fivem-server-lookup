@@ -1,20 +1,15 @@
-import { Footer } from "@/src/components/Footer";
-import { Logo } from "@/src/components/Logo";
+import { Footer } from "@/src/components/layout/Footer";
+import { Logo } from "@/src/components/layout/Logo";
 import { SearchBar } from "@/src/components/SearchBar";
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Poppins } from "next/font/google";
 import "react-tippy/dist/tippy.css";
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+const poppins = Poppins({
+  weight: ["100", "200", "300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -29,9 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-y-scroll`}
-      >
+      <body className={`${poppins.className} antialiased overflow-y-scroll`}>
         <div className="flex flex-col min-h-screen px-4">
           <Logo />
           <SearchBar />
