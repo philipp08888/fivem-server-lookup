@@ -1,16 +1,16 @@
+import { Column } from "@/src/components/Column";
 import { Divider } from "@/src/components/Divider";
 import { Error } from "@/src/components/Error";
 import { ImageWithFallback } from "@/src/components/ImageWithFallback";
-import { InformativeTooltip } from "@/src/components/InformativeTooltip";
 import { Container } from "@/src/components/layout/Container";
 import { PlayerSection } from "@/src/components/sections/PlayerSection";
 import { ResourceSection } from "@/src/components/sections/ResourceSection";
-import { Tag } from "@/src/components/Tag";
+import { formatToHTMLColor } from "@/src/functions/formatToHTMLColor";
+import { getFlagEmoji } from "@/src/functions/getFlagEmoji";
+import { getUpvoteTooltip } from "@/src/functions/getUpvoteTooltip";
+import { isDefined } from "@/src/functions/isDefined";
 import { ServerData } from "@/src/types/ServerData";
-import { formatToHTMLColor } from "@/src/utils/formatToHTMLColor";
-import { getFlagEmoji } from "@/src/utils/getFlagEmoji";
 import { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface LookupPageProps {
@@ -128,52 +128,23 @@ const Page = async ({ searchParams }: LookupPageProps) => {
               </span>
             </div>
           </div>
-          <div>
-            <Tag>Information</Tag>
-            <div className="flex flex-row justify-between flex-wrap">
-              {data.upvotePower > 0 && (
-                <div className="flex flex-row gap-1 items-center">
-                  <p>🚀 {data.upvotePower} Upvotes</p>
-                  <InformativeTooltip>
-                    An upvote costs 5.95 euros (
-                    <a
-                      href="https://zap-hosting.com/en/shop/product/fivem-upvotes/"
-                      rel="noopener noreferrer"
-                    >
-                      zap-hosting.com
-                    </a>
-                    ) <br />
-                    {data.upvotePower} Upvotes x 5,95€ ={" "}
-                    {Math.round(data.upvotePower * 5.6)} €
-                  </InformativeTooltip>
-                </div>
-              )}
-              {data.vars?.sv_enforceGameBuild && (
-                <div className="flex flex-row gap-1 items-center">
-                  <p>🎮 Game Build {data.vars.sv_enforceGameBuild}</p>
-                  <InformativeTooltip>
-                    The sv_enforceGameBuild setting sets the game version for
-                    the server and thus makes it possible to access new DLC
-                    content such as cars, weapons or interiors.
-                    <br />
-                    You can find a list of the game versions currently supported
-                    by FiveM here:{" "}
-                    <Link href="https://zap-hosting.com/guides/docs/fivem-gamebuild/#available-gamebuilds">
-                      Game Builds
-                    </Link>
-                  </InformativeTooltip>
-                </div>
-              )}
-              {data.server && (
-                <div className="flex flex-row gap-1 items-center">
-                  <p>{data.server}</p>
-                  <InformativeTooltip>
-                    The server data point usually tells you which operating
-                    system the respective server is running on
-                  </InformativeTooltip>
-                </div>
-              )}
-            </div>
+          <div className="flex flex-row justify-between gap-2">
+            <Column
+              name="Upvotes"
+              value={data.upvotePower}
+              tooltip={getUpvoteTooltip(data.upvotePower, 5.95)}
+            />
+            <Column name="Bursts" value={data.burstPower} />
+
+            {isDefined(data.vars["txAdmin-version"]) && (
+              <Column
+                name="txAdmin Version"
+                value={String(data.vars["txAdmin-version"])}
+              />
+            )}
+            {isDefined(data.vars.sv_enforceGameBuild) && (
+              <Column name="Game Build" value={data.vars.sv_enforceGameBuild} />
+            )}
           </div>
         </div>
       </Container>

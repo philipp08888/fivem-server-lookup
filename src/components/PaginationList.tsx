@@ -86,7 +86,7 @@ export const PaginationList = <T,>({
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
           disabled={currentPage === 0}
-          className="px-4 py-2 bg-white text-black rounded disabled:opacity-50"
+          className="px-4 py-2 bg-white text-black font-medium rounded disabled:opacity-50 disabled:font-normal"
         >
           Back
         </button>
@@ -98,7 +98,7 @@ export const PaginationList = <T,>({
             setCurrentPage((prev) => (prev + 1 < totalPages ? prev + 1 : prev))
           }
           disabled={currentPage >= totalPages - 1}
-          className="px-4 py-2 bg-white text-black font-medium rounded disabled:opacity-50"
+          className="px-4 py-2 bg-white text-black font-medium rounded disabled:opacity-50 disabled:font-normal"
         >
           Next
         </button>

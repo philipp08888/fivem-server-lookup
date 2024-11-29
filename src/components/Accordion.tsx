@@ -31,7 +31,7 @@ export const Accordion = ({ title, children }: AccordionProps) => {
       <motion.div
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
+        transition={{ duration: 0.8, ease: "easeInOut" }}
         style={{ overflow: "hidden" }}
       >
         <div className="p-2">{children}</div>
