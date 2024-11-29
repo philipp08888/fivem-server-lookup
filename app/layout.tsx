@@ -24,7 +24,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.className} antialiased overflow-y-scroll`}>
+      <body
+        className={`${poppins.className} antialiased overflow-y-scroll scroll-smooth`}
+      >
         <div className="flex flex-col min-h-screen px-4">
           <Logo />
           <SearchBar />

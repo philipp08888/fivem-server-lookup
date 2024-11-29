@@ -151,9 +151,9 @@ const Page = async ({ searchParams }: LookupPageProps) => {
             <div className="flex flex-col gap-1">
               <Tag>Tags</Tag>
               <div className="flex flex-row gap-2 flex-wrap">
-                {data.vars.tags.split(",").map((tag) => (
+                {data.vars.tags.split(",").map((tag, index) => (
                   <span
-                    key={tag}
+                    key={tag + index}
                     className="rounded-md bg-[#888] text-sm px-2 py-1"
                   >
                     {tag}
