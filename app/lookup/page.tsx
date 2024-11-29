@@ -77,7 +77,7 @@ const Page = async ({ searchParams }: LookupPageProps) => {
     <>
       <Container>
         {data.vars && data.vars.banner_detail && (
-          <div className="w-full bg-black">
+          <div className="w-full bg-black rounded-t-md">
             <ImageWithFallback
               src={`/api/image-proxy?url=${encodeURIComponent(
                 data.vars.banner_detail
