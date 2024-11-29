@@ -150,7 +150,7 @@ const Page = async ({ searchParams }: LookupPageProps) => {
           {isDefined(data.vars.tags) && data.vars.tags.length > 0 && (
             <div className="flex flex-col gap-1">
               <Tag>Tags</Tag>
-              <div className="flex flex-row gap-2">
+              <div className="flex flex-row gap-2 flex-wrap">
                 {data.vars.tags.split(",").map((tag) => (
                   <span
                     key={tag}
