@@ -154,12 +154,11 @@ export const SearchBar = (): React.JSX.Element => {
 
   return (
     <>
-      <div className="flex relative flex-col items-center max-w-[1000px] shadow-bg w-full mx-auto  bg-[#333]">
-        <div className="flex justify-between w-full items-center px-4 py-2">
-          <div className="bg-[#555] p-1 rounded-sm text-xs text-[#ccc] select-none whitespace-nowrap">
-            {isMac ? "⌘ + K" : "Ctrl + K"}
-          </div>
-        </div>
+      <div className="w-full flex max-w-[1000px] mx-auto justify-end">
+        <MagnifyingGlassIcon
+          onClick={() => setDialogOpen(true)}
+          className="size-4 cursor-pointer"
+        />
       </div>
       <AnimatePresence>
         {isDialogOpen && (
