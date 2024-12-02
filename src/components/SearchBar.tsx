@@ -197,7 +197,7 @@ export const SearchBar = (): React.JSX.Element => {
       );
     }
 
-    if (serverUrl.length === 0) {
+    if (serverUrl.length === 0 && serversData.length > 0) {
       return (
         <>
           <Tag>Recently searched servers</Tag>
