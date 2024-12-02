@@ -34,6 +34,11 @@ export const SearchBar = (): React.JSX.Element => {
   const getRecentSearchRequests: SearchRequest[] = useMemo(() => {
     if (typeof window !== "undefined") {
       const localSearchHistory = localStorage.getItem("SEARCH_HISTORY");
+
+      if (!localSearchHistory) {
+        localStorage.setItem("SEARCH_HISTORY", JSON.stringify([]));
+      }
+
       return localSearchHistory ? JSON.parse(localSearchHistory) : [];
     }
     return [];
