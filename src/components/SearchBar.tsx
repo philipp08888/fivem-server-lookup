@@ -1,15 +1,14 @@
 "use client";
 
 import { getServersByIds } from "@/app/lookup/actions";
-import {
-  ArrowUpRightIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Server } from "@prisma/client";
+import _ from "lodash";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { formatToHTMLColor } from "../functions/formatToHTMLColor";
+import { ServerTile } from "./ServerTile";
+import { ServerTileSkeleton } from "./ServerTile.skeleton";
 import { Tag } from "./Tag";
 
 const ID_REGEX = /(?:cfx\.re\/(?:join\/)?)?([a-zA-Z0-9]+)/;
@@ -27,9 +26,13 @@ export const SearchBar = (): React.JSX.Element => {
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [isMac, setMac] = useState<boolean>(false);
   const [serversData, setServersData] = useState<Server[]>([]);
+
+  const [results, setResults] = useState<Server[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getRecentSearchRequests: SearchRequest[] = useMemo(() => {
     if (typeof window !== "undefined") {
@@ -152,6 +155,89 @@ export const SearchBar = (): React.JSX.Element => {
     };
   }, []);
 
+  const debouncedSearch = useCallback(
+    _.debounce(async (searchTerm: string) => {
+      setLoading(true);
+
+      if (searchTerm) {
+        const response = await fetch(
+          `/api/search?query=${encodeURIComponent(searchTerm)}`
+        );
+        const data = await response.json();
+        setResults(data);
+      } else {
+        setResults([]);
+      }
+
+      setLoading(false);
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    if (inputRef.current && isDialogOpen) {
+      inputRef.current.focus();
+    }
+  }, [isDialogOpen]);
+
+  const renderResults = useMemo(() => {
+    if (loading) {
+      return <ServerTileSkeleton />;
+    }
+
+    if (results.length === 0 && serverUrl.length > 0) {
+      return (
+        <div className="rounded-md bg-[#444] p-4">
+          <h2 className="text-xl">No results found</h2>
+          <p className="text-sm text-[#cccccc87]">
+            Tip: A server is only accessible via the search as soon as it has
+            been used on this page for the first time
+          </p>
+        </div>
+      );
+    }
+
+    if (serverUrl.length === 0) {
+      return (
+        <>
+          <Tag>Recently searched servers</Tag>
+          {serversData.map((server, index) => (
+            <ServerTile
+              key={server.id + index}
+              hostname={server.hostname}
+              imageSrc={`/api/image-proxy?url=${encodeURIComponent(
+                "https://cdn.discordapp.com/icons/630183489915977756/a_25217891e2fcbcddf64a0180814d02d8.gif"
+              )}`}
+              onClick={() => {
+                setDialogOpen(false);
+                startSearch(server.id);
+              }}
+            />
+          ))}
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Tag>Found Servers</Tag>
+        {results.map((result, index) => (
+          <ServerTile
+            key={result.id + index}
+            hostname={result.hostname}
+            imageSrc={`/api/image-proxy?url=${encodeURIComponent(
+              "https://cdn.discordapp.com/icons/630183489915977756/a_25217891e2fcbcddf64a0180814d02d8.gif"
+            )}`}
+            onClick={() => {
+              setDialogOpen(false);
+              startSearch(result.id);
+            }}
+          />
+        ))}
+      </>
+    );
+  }, [results, loading, serverUrl.length, startSearch, serversData]);
+
   return (
     <>
       <div className="w-full flex max-w-[1000px] mx-auto justify-end">
@@ -191,47 +277,24 @@ export const SearchBar = (): React.JSX.Element => {
                     placeholder="Search"
                     className="bg-[#333] appearance-none outline-none w-full"
                     value={serverUrl}
-                    onChange={(e) => setServerUrl(e.target.value)}
+                    onChange={(e) => {
+                      setServerUrl(e.target.value);
+                      debouncedSearch(e.target.value);
+                    }}
                     onKeyDown={(e) => handleKeyDown(e)}
+                    ref={inputRef}
+                    type="text"
                   />
                 </div>
                 <div className="bg-[#555] p-1 rounded-sm text-xs text-[#ccc] select-none whitespace-nowrap">
                   {isMac ? "⌘ + K" : "Ctrl + K"}
                 </div>
               </div>
-              {serversData.length > 0 && (
-                <div className="flex flex-col gap-2 border-t-2 border-[#444] px-4 pb-4 pt-2">
-                  <Tag>Recently searched servers</Tag>
-                  <ul className="flex flex-col gap-1">
-                    {serversData.map((server, index) => (
-                      <li
-                        key={server.id + index}
-                        className="flex w-full gap-4 flex-row cursor-pointer hover:bg-[#444] p-2 rounded-md"
-                        onClick={() => {
-                          setDialogOpen(false);
-                          startSearch(server.id);
-                        }}
-                      >
-                        <div className="flex flex-row gap-2">
-                          <img
-                            src="https://cdn.discordapp.com/icons/630183489915977756/a_25217891e2fcbcddf64a0180814d02d8.gif"
-                            width={64}
-                            height={64}
-                            alt="Icon"
-                            className="rounded-md w-12 h-12"
-                          />
-                          <div className="line-clamp-2 overflow-hidden text-ellipsis">
-                            {formatToHTMLColor(server.hostname)}
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-center">
-                          <ArrowUpRightIcon className="size-4" />
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+
+              <div className="flex flex-col gap-2 border-t-2 border-[#444] px-4 pb-4 pt-2">
+                {renderResults}
+              </div>
+
               <div className="flex flex-row justify-end gap-2 bg-[#333] rounded-b-md p-2 border-t-2 border-[#555]">
                 <div className="flex flex-row gap-1 items-center">
                   <span className="rounded-md text-[#ccc] bg-[#444] shadow-md p-0.5 select-none">
