@@ -72,7 +72,7 @@ export async function GET(request: Request) {
 
     if (contentLength && parseInt(contentLength, 10) > maxSize) {
       return NextResponse.json(
-        { error: "Image too large (max 25mb)" + contentLength },
+        { error: "Image too large (max 32mb)" + contentLength },
         { status: 400 }
       );
     }

@@ -10,9 +10,11 @@ import { formatToHTMLColor } from "@/src/functions/formatToHTMLColor";
 import { getFlagEmoji } from "@/src/functions/getFlagEmoji";
 import { getUpvoteTooltip } from "@/src/functions/getUpvoteTooltip";
 import { isDefined } from "@/src/functions/isDefined";
+import { prisma } from "@/src/prisma";
 import { ServerData } from "@/src/types/ServerData";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import xss from "xss";
 
 interface LookupPageProps {
   searchParams: Promise<{ query?: string }>;
@@ -56,6 +58,31 @@ async function fetchDataFromAPI(query: string) {
   return data;
 }
 
+async function upsertServer(id: string, hostname: string, image64: string) {
+  if (!id || !hostname || !image64) {
+    throw new globalThis.Error(
+      "id, hostname, and image64 are required and cannot be null or empty."
+    );
+  }
+
+  const sanitizedName = xss(hostname);
+
+  try {
+    await prisma.server.upsert({
+      where: { id: id },
+      update: { hostname: sanitizedName, image64: image64 },
+      create: {
+        id: id,
+        hostname: sanitizedName,
+        image64: image64,
+      },
+    });
+  } catch (error) {
+    console.error("Error while saving server:", error);
+    throw error;
+  }
+}
+
 const Page = async ({ searchParams }: LookupPageProps) => {
   const query = (await searchParams).query;
 
@@ -72,6 +99,8 @@ const Page = async ({ searchParams }: LookupPageProps) => {
   if (data.vars.lookup !== undefined && data.vars.lookup) {
     return <Error message="Lookups for this server are disabled." />;
   }
+
+  await upsertServer(query, data.hostname, "COMING_SOON");
 
   return (
     <>
