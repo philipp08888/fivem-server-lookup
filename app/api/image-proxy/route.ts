@@ -79,6 +79,14 @@ export async function GET(request: Request) {
 
     const imageBuffer = await response.arrayBuffer();
 
+    const base64 = searchParams.get("base64");
+
+    if (base64 && base64 === "true") {
+      const imageBase64 = arrayBufferToBase64(imageBuffer);
+
+      return NextResponse.json({ data: imageBase64 }, { status: 200 });
+    }
+
     return new Response(imageBuffer, {
       headers: {
         "Content-Type": contentType || "application/octet-stream",
@@ -92,4 +100,15 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
+}
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const uint8Array = new Uint8Array(buffer);
+  let binary = "";
+
+  for (let i = 0; i < uint8Array.byteLength; i++) {
+    binary += String.fromCharCode(uint8Array[i]);
+  }
+
+  return Buffer.from(binary, "binary").toString("base64");
 }

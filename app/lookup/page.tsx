@@ -58,10 +58,10 @@ async function fetchDataFromAPI(query: string) {
   return data;
 }
 
-async function upsertServer(id: string, hostname: string, image64: string) {
-  if (!id || !hostname || !image64) {
+async function upsertServer(id: string, hostname: string, image: string) {
+  if (!id || !hostname || !image) {
     throw new globalThis.Error(
-      "id, hostname, and image64 are required and cannot be null or empty."
+      "id, hostname, and image are required and cannot be null or empty."
     );
   }
 
@@ -70,11 +70,11 @@ async function upsertServer(id: string, hostname: string, image64: string) {
   try {
     await prisma.server.upsert({
       where: { id: id },
-      update: { hostname: sanitizedName, image64: image64 },
+      update: { hostname: sanitizedName, image: image },
       create: {
         id: id,
         hostname: sanitizedName,
-        image64: image64,
+        image: image,
       },
     });
   } catch (error) {
@@ -100,7 +100,11 @@ const Page = async ({ searchParams }: LookupPageProps) => {
     return <Error message="Lookups for this server are disabled." />;
   }
 
-  await upsertServer(query, data.hostname, "COMING_SOON");
+  await upsertServer(
+    query,
+    data.hostname,
+    "https://cdn.discordapp.com/icons/630183489915977756/a_25217891e2fcbcddf64a0180814d02d8.gif"
+  );
 
   return (
     <>

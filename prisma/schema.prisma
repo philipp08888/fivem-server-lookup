@@ -17,5 +17,5 @@ datasource db {
 model Server {
   id  String  @id
   hostname  String
-  image64   String
+  image   String
 }

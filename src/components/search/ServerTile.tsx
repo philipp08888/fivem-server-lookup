@@ -2,7 +2,7 @@
 
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { formatToHTMLColor } from "../functions/formatToHTMLColor";
+import { formatToHTMLColor } from "../../functions/formatToHTMLColor";
 
 interface ServerTileProps {
   imageSrc: string;

@@ -7,9 +7,7 @@ import _ from "lodash";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ServerTile } from "./ServerTile";
-import { ServerTileSkeleton } from "./ServerTile.skeleton";
-import { Tag } from "./Tag";
+import { Results } from "./Results";
 
 const ID_REGEX = /(?:cfx\.re\/(?:join\/)?)?([a-zA-Z0-9]+)/;
 
@@ -82,8 +80,8 @@ export const SearchBar = (): React.JSX.Element => {
   }, []);
 
   useEffect(() => {
-    loadServers();
-  }, [searchHistory, loadServers]);
+    void loadServers();
+  }, []);
 
   const startSearch = useCallback(
     (query: string) => {
@@ -155,22 +153,23 @@ export const SearchBar = (): React.JSX.Element => {
     };
   }, []);
 
-  const debouncedSearch = useCallback(
-    _.debounce(async (searchTerm: string) => {
-      setLoading(true);
+  const debouncedSearch = useMemo(
+    () =>
+      _.debounce(async (searchTerm: string) => {
+        setLoading(true);
 
-      if (searchTerm) {
-        const response = await fetch(
-          `/api/search?query=${encodeURIComponent(searchTerm)}`
-        );
-        const data = await response.json();
-        setResults(data);
-      } else {
-        setResults([]);
-      }
+        if (searchTerm) {
+          const response = await fetch(
+            `/api/search?query=${encodeURIComponent(searchTerm)}`
+          );
+          const data = await response.json();
+          setResults(data);
+        } else {
+          setResults([]);
+        }
 
-      setLoading(false);
-    }, 500),
+        setLoading(false);
+      }, 500),
     []
   );
 
@@ -179,64 +178,6 @@ export const SearchBar = (): React.JSX.Element => {
       inputRef.current.focus();
     }
   }, [isDialogOpen]);
-
-  const renderResults = useMemo(() => {
-    if (loading) {
-      return <ServerTileSkeleton />;
-    }
-
-    if (results.length === 0 && serverUrl.length > 0) {
-      return (
-        <div className="rounded-md bg-[#444] p-4">
-          <h2 className="text-xl">No results found</h2>
-          <p className="text-sm text-[#cccccc87]">
-            Tip: A server is only accessible via the search as soon as it has
-            been used on this page for the first time
-          </p>
-        </div>
-      );
-    }
-
-    if (serverUrl.length === 0 && serversData.length > 0) {
-      return (
-        <>
-          <Tag>Recently searched servers</Tag>
-          {serversData.map((server, index) => (
-            <ServerTile
-              key={server.id + index}
-              hostname={server.hostname}
-              imageSrc={`/api/image-proxy?url=${encodeURIComponent(
-                "https://cdn.discordapp.com/icons/630183489915977756/a_25217891e2fcbcddf64a0180814d02d8.gif"
-              )}`}
-              onClick={() => {
-                setDialogOpen(false);
-                startSearch(server.id);
-              }}
-            />
-          ))}
-        </>
-      );
-    }
-
-    return (
-      <>
-        <Tag>Found Servers</Tag>
-        {results.map((result, index) => (
-          <ServerTile
-            key={result.id + index}
-            hostname={result.hostname}
-            imageSrc={`/api/image-proxy?url=${encodeURIComponent(
-              "https://cdn.discordapp.com/icons/630183489915977756/a_25217891e2fcbcddf64a0180814d02d8.gif"
-            )}`}
-            onClick={() => {
-              setDialogOpen(false);
-              startSearch(result.id);
-            }}
-          />
-        ))}
-      </>
-    );
-  }, [results, loading, serverUrl.length, startSearch, serversData]);
 
   return (
     <>
@@ -290,10 +231,28 @@ export const SearchBar = (): React.JSX.Element => {
                   {isMac ? "⌘ + K" : "Ctrl + K"}
                 </div>
               </div>
-
-              <div className="flex flex-col gap-2 border-t-2 border-[#444] px-4 pb-4 pt-2">
-                {renderResults}
-              </div>
+              {serverUrl.length > 0 ? (
+                <Results
+                  results={results}
+                  onClick={(id) => {
+                    setDialogOpen(false);
+                    startSearch(id);
+                  }}
+                  tag="SEARCH_RESULTS"
+                  loading={loading}
+                  query={serverUrl}
+                />
+              ) : (
+                <Results
+                  results={serversData}
+                  onClick={(id) => {
+                    setDialogOpen(false);
+                    startSearch(id);
+                  }}
+                  tag="RECENTLY_SEARCHED"
+                  loading={loading}
+                />
+              )}
 
               <div className="flex flex-row justify-end gap-2 bg-[#333] rounded-b-md p-2 border-t-2 border-[#555]">
                 <div className="flex flex-row gap-1 items-center">
