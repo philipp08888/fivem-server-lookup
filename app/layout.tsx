@@ -25,9 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.className} antialiased overflow-y-scroll scroll-smooth`}
+        className={`${poppins.className} overflow-y-scroll scroll-smooth antialiased`}
       >
-        <div className="flex flex-col min-h-screen px-4">
+        <div className="flex min-h-screen flex-col px-4">
           <Logo />
           <SearchBar />
           <main className="flex-grow">{children}</main>

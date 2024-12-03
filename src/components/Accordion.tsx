@@ -27,12 +27,12 @@ export const Accordion = ({ title, children }: AccordionProps) => {
   return (
     <div className="flex flex-col justify-center">
       <div
-        className="flex justify-between items-center cursor-pointer"
+        className="flex cursor-pointer items-center justify-between"
         onClick={handleToggle}
         aria-expanded={isOpen}
         aria-controls="accordion-content"
       >
-        <div className="flex-1 flex items-center">{title}</div>
+        <div className="flex flex-1 items-center">{title}</div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}

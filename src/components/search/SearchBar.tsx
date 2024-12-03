@@ -31,6 +31,8 @@ export const SearchBar = (): React.JSX.Element => {
   const [results, setResults] = useState<Server[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [searchHistory, setSearchHistory] = useState<SearchRequest[]>([]);
+
   const getRecentSearchRequests: SearchRequest[] = useMemo(() => {
     if (typeof window !== "undefined") {
       const localSearchHistory = localStorage.getItem("SEARCH_HISTORY");
@@ -49,7 +51,7 @@ export const SearchBar = (): React.JSX.Element => {
       const searchRequests = getRecentSearchRequests;
 
       const serverIds = searchRequests.map(
-        (searchRequest) => searchRequest.query
+        (searchRequest) => searchRequest.query,
       );
 
       const fetchedServersData = await getServersByIds(serverIds);
@@ -59,6 +61,7 @@ export const SearchBar = (): React.JSX.Element => {
         return;
       }
 
+      console.log(_.isEqual(fetchedServersData, serversData));
       setServersData(fetchedServersData);
     } catch {
       console.error("Error while loading data");
@@ -67,34 +70,51 @@ export const SearchBar = (): React.JSX.Element => {
 
   useEffect(() => {
     setMac(navigator.platform.indexOf("Mac") === 0);
+
+    if (typeof window !== "undefined") {
+      const localSearchHistory = localStorage.getItem("SEARCH_HISTORY");
+      const parsedSearchHistory = JSON.parse(localSearchHistory ?? "");
+
+      if (parsedSearchHistory) {
+        setSearchHistory(parsedSearchHistory);
+      }
+    }
   }, []);
 
   useEffect(() => {
     void loadServers();
-  }, []);
+    console.log("LOADING NEW SERVEr");
+  }, [searchHistory]);
 
   const startSearch = useCallback(
     (query: string) => {
       const match = query.trim().match(ID_REGEX);
 
       if (match) {
-        const updatedList = [
-          ...serversData
-            .map((server) => ({
-              query: server.id,
-              // date is currently not fully implemented
-              date: new Date(),
-            }))
-            .slice(0, 4),
-          { query: query, date: new Date() },
-        ];
+        setSearchHistory((prevHistory) => {
+          const updatedSearchHistory = [
+            ...prevHistory.slice(0, 4),
+            { query: query, date: new Date() },
+          ];
 
-        localStorage.setItem("SEARCH_HISTORY", JSON.stringify(updatedList));
+          updatedSearchHistory.sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+          );
+
+          localStorage.setItem(
+            "SEARCH_HISTORY",
+            JSON.stringify(updatedSearchHistory),
+          );
+
+          console.log("UPDATED  TO", updatedSearchHistory);
+
+          return updatedSearchHistory;
+        });
 
         router.push(`/lookup?query=${encodeURIComponent(match[1])}`);
       }
     },
-    [router]
+    [router],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -145,7 +165,7 @@ export const SearchBar = (): React.JSX.Element => {
 
         if (searchTerm) {
           const response = await fetch(
-            `/api/search?query=${encodeURIComponent(searchTerm)}`
+            `/api/search?query=${encodeURIComponent(searchTerm)}`,
           );
           const data = await response.json();
           setResults(data);
@@ -155,7 +175,7 @@ export const SearchBar = (): React.JSX.Element => {
 
         setLoading(false);
       }, 500),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -166,7 +186,7 @@ export const SearchBar = (): React.JSX.Element => {
 
   return (
     <>
-      <div className="w-full flex max-w-[1000px] mx-auto justify-end">
+      <div className="mx-auto flex w-full max-w-[1000px] justify-end">
         <MagnifyingGlassIcon
           onClick={() => setDialogOpen(true)}
           className="size-4 cursor-pointer"
@@ -179,18 +199,18 @@ export const SearchBar = (): React.JSX.Element => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-opacity-80 bg-black flex items-center justify-center z-50"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="rounded-md w-full max-w-xl relative shadow-bg bg-[#333] flex flex-col"
+              className="relative flex w-full max-w-xl flex-col rounded-md bg-[#333] shadow-bg"
               ref={dialogRef}
             >
-              <div className="flex justify-between w-full items-center px-4 py-2">
-                <div className="flex flex-row gap-1 items-center w-full">
+              <div className="flex w-full items-center justify-between px-4 py-2">
+                <div className="flex w-full flex-row items-center gap-1">
                   <MagnifyingGlassIcon
                     className="size-4 cursor-pointer"
                     onClick={() => {
@@ -201,7 +221,7 @@ export const SearchBar = (): React.JSX.Element => {
                   />
                   <input
                     placeholder="Search"
-                    className="bg-[#333] appearance-none outline-none w-full"
+                    className="w-full appearance-none bg-[#333] outline-none"
                     value={serverUrl}
                     onChange={(e) => {
                       setServerUrl(e.target.value);
@@ -212,7 +232,7 @@ export const SearchBar = (): React.JSX.Element => {
                     type="text"
                   />
                 </div>
-                <div className="bg-[#555] p-1 rounded-sm text-xs text-[#ccc] select-none whitespace-nowrap">
+                <div className="select-none whitespace-nowrap rounded-sm bg-[#555] p-1 text-xs text-[#ccc]">
                   {isMac ? "⌘ + K" : "Ctrl + K"}
                 </div>
               </div>
@@ -239,15 +259,15 @@ export const SearchBar = (): React.JSX.Element => {
                 />
               )}
 
-              <div className="flex flex-row justify-end gap-2 bg-[#333] rounded-b-md p-2 border-t-2 border-[#555]">
-                <div className="flex flex-row gap-1 items-center">
-                  <span className="rounded-md text-[#ccc] bg-[#444] shadow-md p-0.5 select-none">
+              <div className="flex flex-row justify-end gap-2 rounded-b-md border-t-2 border-[#555] bg-[#333] p-2">
+                <div className="flex flex-row items-center gap-1">
+                  <span className="select-none rounded-md bg-[#444] p-0.5 text-[#ccc] shadow-md">
                     esc
                   </span>
                   Close
                 </div>
-                <div className="flex flex-row gap-1 items-center">
-                  <span className="rounded-md text-[#ccc] bg-[#444] shadow-md p-0.5 select-none">
+                <div className="flex flex-row items-center gap-1">
+                  <span className="select-none rounded-md bg-[#444] p-0.5 text-[#ccc] shadow-md">
                     ↵
                   </span>
                   Return

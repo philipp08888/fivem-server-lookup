@@ -3,7 +3,7 @@ import { formatEuro } from "./formatEuro";
 
 export function getUpvoteTooltip(
   upvotes: number,
-  upvotePrice: number
+  upvotePrice: number,
 ): React.JSX.Element {
   return (
     <>

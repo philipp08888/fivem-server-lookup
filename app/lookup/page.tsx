@@ -51,7 +51,7 @@ export async function generateMetadata({
  */
 async function fetchDataFromAPI(query: string) {
   const request = await fetch(
-    `https://servers-frontend.fivem.net/api/servers/single/${query}`
+    `https://servers-frontend.fivem.net/api/servers/single/${query}`,
   );
 
   const { Data: data }: { Data: ServerData } = await request.json();
@@ -61,7 +61,7 @@ async function fetchDataFromAPI(query: string) {
 async function upsertServer(id: string, hostname: string, image: string) {
   if (!id || !hostname || !image) {
     throw new globalThis.Error(
-      "id, hostname, and image are required and cannot be null or empty."
+      "id, hostname, and image are required and cannot be null or empty.",
     );
   }
 
@@ -103,21 +103,21 @@ const Page = async ({ searchParams }: LookupPageProps) => {
   await upsertServer(
     query,
     data.hostname,
-    "https://cdn.discordapp.com/icons/630183489915977756/a_25217891e2fcbcddf64a0180814d02d8.gif"
+    "https://cdn.discordapp.com/icons/630183489915977756/a_25217891e2fcbcddf64a0180814d02d8.gif",
   );
 
   return (
     <>
       <Container>
         {data.vars && data.vars.banner_detail && (
-          <div className="w-full bg-black rounded-t-md">
+          <div className="w-full rounded-t-md bg-black">
             <ImageWithFallback
               src={`/api/image-proxy?url=${encodeURIComponent(
-                data.vars.banner_detail
+                data.vars.banner_detail,
               )}`}
               fallbackSrc="/no-banner.svg"
               alt="Banner"
-              className="rounded-t-md max-h-full aspect-auto"
+              className="aspect-auto max-h-full rounded-t-md"
               sizes="100vw"
               width={1920}
               height={1080}
@@ -128,7 +128,7 @@ const Page = async ({ searchParams }: LookupPageProps) => {
             />
           </div>
         )}
-        <div className="flex flex-col gap-4 px-8 py-4 rounded-b-md">
+        <div className="flex flex-col gap-4 rounded-b-md px-8 py-4">
           <div className="flex flex-col gap-2">
             {data.vars.sv_projectName && (
               <>
@@ -138,7 +138,7 @@ const Page = async ({ searchParams }: LookupPageProps) => {
                 <Divider />
               </>
             )}
-            <div className="flex flex-col sm:flex-row justify-center sm:justify-between gap-4">
+            <div className="flex flex-col justify-center gap-4 sm:flex-row sm:justify-between">
               {data.iconVersion && (
                 <ImageWithFallback
                   src={`https://servers-frontend.fivem.net/api/servers/icon/${query}/${data.iconVersion}.png`}
@@ -185,11 +185,11 @@ const Page = async ({ searchParams }: LookupPageProps) => {
           {isDefined(data.vars.tags) && data.vars.tags.length > 0 && (
             <div className="flex flex-col gap-1">
               <Tag>Tags</Tag>
-              <div className="flex flex-row gap-2 flex-wrap">
+              <div className="flex flex-row flex-wrap gap-2">
                 {data.vars.tags.split(",").map((tag, index) => (
                   <span
                     key={tag + index}
-                    className="rounded-md bg-[#888] text-sm px-2 py-1"
+                    className="rounded-md bg-[#888] px-2 py-1 text-sm"
                   >
                     {tag}
                   </span>

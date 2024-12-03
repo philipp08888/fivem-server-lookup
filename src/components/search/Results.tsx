@@ -47,12 +47,12 @@ export const Results = memo(
       if (!_.isEqual(results, finalResults)) {
         setFinalResults(results);
       }
-    }, [results]);
+    }, [results, finalResults]);
 
     if (loading && !_.isEqual(results, finalResults)) {
       return (
         <motion.div
-          className="flex flex-col gap-1 min-h-32"
+          className="flex min-h-32 flex-col gap-1"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -98,7 +98,7 @@ export const Results = memo(
                 onClick={() => onClick(result.id)}
                 hostname={result.hostname}
                 imageSrc={`/api/image-proxy?url=${encodeURIComponent(
-                  result.image
+                  result.image,
                 )}`}
               />
             </motion.div>
@@ -106,7 +106,7 @@ export const Results = memo(
         </motion.div>
       </div>
     );
-  }
+  },
 );
 
 Results.displayName = "Results";

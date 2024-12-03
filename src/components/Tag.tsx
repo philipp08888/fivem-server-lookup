@@ -3,5 +3,5 @@
 import { ReactNode } from "react";
 
 export const Tag = ({ children }: { children: ReactNode }) => {
-  return <div className="select-none text-[#999] text-xs">{children}</div>;
+  return <div className="select-none text-xs text-[#999]">{children}</div>;
 };

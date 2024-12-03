@@ -12,8 +12,8 @@ export const NoResults = ({
   onClick,
 }: NoResultsProps): React.JSX.Element => {
   return (
-    <div className="flex flex-col gap-2 justify-center border-[#555] border-t-2 px-4 pb-4 pt-2 min-h-32">
-      <div className="flex flex-col gap-1 p-2 bg-[#444] rounded-md">
+    <div className="flex min-h-32 flex-col justify-center gap-2 border-t-2 border-[#555] px-4 pb-4 pt-2">
+      <div className="flex flex-col gap-1 rounded-md bg-[#444] p-2">
         <h1 className="text-xl">No results found</h1>
         <p className="text-sm text-[#cccccc87]">
           Note: A server can only be reached by its name via the search when it
@@ -23,7 +23,7 @@ export const NoResults = ({
       </div>
       {query && (
         <div
-          className="w-full flex justify-between hover:bg-[#444] cursor-pointer rounded-md px-4 py-2"
+          className="flex w-full cursor-pointer justify-between rounded-md px-4 py-2 hover:bg-[#444]"
           onClick={onClick}
         >
           Search with Id: {query}

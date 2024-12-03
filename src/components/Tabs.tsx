@@ -12,14 +12,14 @@ export const Tabs = ({ tabs }: TabsProps) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-row gap-4 justify-center">
+      <div className="flex flex-row justify-center gap-4">
         {tabs.map((tabs, index) => (
           <span
             key={tabs.name}
             onClick={() => setActiveTab(index)}
             className={`${
-              activeTab === index ? " shadow-bg bg-[#444]" : "text-gray-200"
-            } hover:shadow-bg rounded-md px-4 py-2 cursor-pointer text-sm`}
+              activeTab === index ? "bg-[#444] shadow-bg" : "text-gray-200"
+            } cursor-pointer rounded-md px-4 py-2 text-sm hover:shadow-bg`}
           >
             {tabs.name}
           </span>

@@ -13,12 +13,10 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const providedImageUrl = searchParams.get("url");
 
-  console.log(request.url);
-
   if (!providedImageUrl) {
     return NextResponse.json(
       { error: "Please provide a valid image url" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -27,14 +25,14 @@ export async function GET(request: Request) {
   if (!allowedDomains.some((domain) => imageUrl.hostname.endsWith(domain))) {
     return NextResponse.json(
       { error: "This domain is not allowed." },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
   if (imageUrl.protocol !== "https:") {
     return NextResponse.json(
       { error: "Please use https as protocol" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -54,7 +52,7 @@ export async function GET(request: Request) {
     if (!response.ok) {
       return NextResponse.json(
         { error: "Failed to fetch image from url" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -63,7 +61,7 @@ export async function GET(request: Request) {
     if (!contentType || !allowedContentTypes.includes(contentType)) {
       return NextResponse.json(
         { error: "Invalid content type" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,7 +71,7 @@ export async function GET(request: Request) {
     if (contentLength && parseInt(contentLength, 10) > maxSize) {
       return NextResponse.json(
         { error: "Image too large (max 32mb)" + contentLength },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -97,7 +95,7 @@ export async function GET(request: Request) {
     console.error("Image fetching error:", error);
     return NextResponse.json(
       { error: "Request timed out or failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

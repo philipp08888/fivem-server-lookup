@@ -2,15 +2,15 @@
 
 export const ServerTileSkeleton = (): React.JSX.Element => {
   return (
-    <div className="flex flex-row h-16 rounded-md justify-between w-full gap-4 p-2 animate-pulse">
-      <div className="flex flex-row gap-2 w-full">
-        <div className="max-w-12 w-full h-full  bg-[#444] rounded-md"></div>
-        <div className="space-y-2 w-full">
-          <div className="h-4 bg-[#444] rounded"></div>
-          <div className="h-4 bg-[#444] rounded w-4/6"></div>
+    <div className="flex h-16 w-full animate-pulse flex-row justify-between gap-4 rounded-md p-2">
+      <div className="flex w-full flex-row gap-2">
+        <div className="h-full w-full max-w-12 rounded-md bg-[#444]"></div>
+        <div className="w-full space-y-2">
+          <div className="h-4 rounded bg-[#444]"></div>
+          <div className="h-4 w-4/6 rounded bg-[#444]"></div>
         </div>
       </div>
-      <div className="h-4 w-4 bg-[#444] rounded"></div>
+      <div className="h-4 w-4 rounded bg-[#444]"></div>
     </div>
   );
 };

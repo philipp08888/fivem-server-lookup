@@ -1,0 +1,14 @@
+node_modules
+
+.next
+out
+
+.env
+
+public/*.js
+public/*.css
+
+playwright-report
+test-results
+
+.vercel

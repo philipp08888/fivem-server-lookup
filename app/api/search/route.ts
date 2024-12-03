@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   if (!query) {
     return NextResponse.json(
       { error: "Please provide a query parameter" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       },
       {
         status: 400,
-      }
+      },
     );
   }
 
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
     console.error("Error while searching server:", error);
     return NextResponse.json(
       { error: "Error while searching servers" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
