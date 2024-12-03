@@ -18,7 +18,6 @@ type SearchRequest = {
 
 export const SearchBar = (): React.JSX.Element => {
   const [serverUrl, setServerUrl] = useState<string>("");
-  const [searchHistory, setSearchHistory] = useState<SearchRequest[]>([]);
   const router = useRouter();
 
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -68,15 +67,6 @@ export const SearchBar = (): React.JSX.Element => {
 
   useEffect(() => {
     setMac(navigator.platform.indexOf("Mac") === 0);
-
-    if (typeof window !== "undefined") {
-      const localSearchHistory = localStorage.getItem("SEARCH_HISTORY");
-      const parsedSearchHistory = JSON.parse(localSearchHistory ?? "");
-
-      if (parsedSearchHistory) {
-        setSearchHistory(parsedSearchHistory);
-      }
-    }
   }, []);
 
   useEffect(() => {
@@ -88,23 +78,18 @@ export const SearchBar = (): React.JSX.Element => {
       const match = query.trim().match(ID_REGEX);
 
       if (match) {
-        setSearchHistory((prevHistory) => {
-          const updatedSearchHistory = [
-            ...prevHistory.slice(0, 4),
-            { query: query, date: new Date() },
-          ];
+        const updatedList = [
+          ...serversData
+            .map((server) => ({
+              query: server.id,
+              // date is currently not fully implemented
+              date: new Date(),
+            }))
+            .slice(0, 4),
+          { query: query, date: new Date() },
+        ];
 
-          updatedSearchHistory.sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-          );
-
-          localStorage.setItem(
-            "SEARCH_HISTORY",
-            JSON.stringify(updatedSearchHistory)
-          );
-
-          return updatedSearchHistory;
-        });
+        localStorage.setItem("SEARCH_HISTORY", JSON.stringify(updatedList));
 
         router.push(`/lookup?query=${encodeURIComponent(match[1])}`);
       }

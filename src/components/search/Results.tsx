@@ -108,3 +108,5 @@ export const Results = memo(
     );
   }
 );
+
+Results.displayName = "Results";
