@@ -21,7 +21,7 @@ export const NoResults = ({
           indexed, you must use the Id for the first time
         </p>
       </div>
-      {query && (
+      {query && query !== "" && (
         <div
           className="flex w-full cursor-pointer justify-between rounded-md px-4 py-2 hover:bg-[#444]"
           onClick={onClick}

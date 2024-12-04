@@ -17,7 +17,7 @@ type SearchRequest = {
 };
 
 export const SearchBar = (): React.JSX.Element => {
-  const [serverUrl, setServerUrl] = useState<string>("");
+  const [query, setQuery] = useState<string>("");
   const router = useRouter();
 
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -26,31 +26,22 @@ export const SearchBar = (): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [isMac, setMac] = useState<boolean>(false);
-  const [serversData, setServersData] = useState<Server[]>([]);
 
   const [results, setResults] = useState<Server[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const [searchHistory, setSearchHistory] = useState<SearchRequest[]>([]);
 
-  const getRecentSearchRequests: SearchRequest[] = useMemo(() => {
-    if (typeof window !== "undefined") {
-      const localSearchHistory = localStorage.getItem("SEARCH_HISTORY");
+  const getLocalSearchHistory = (): SearchRequest[] => {
+    if (typeof window === "undefined") return [];
 
-      if (!localSearchHistory) {
-        localStorage.setItem("SEARCH_HISTORY", JSON.stringify([]));
-      }
-
-      return localSearchHistory ? JSON.parse(localSearchHistory) : [];
-    }
-    return [];
-  }, []);
+    const history = localStorage.getItem("SEARCH_HISTORY");
+    return history ? JSON.parse(history) : [];
+  };
 
   const loadServers = useCallback(async () => {
     try {
-      const searchRequests = getRecentSearchRequests;
-
-      const serverIds = searchRequests.map(
+      const serverIds = searchHistory.map(
         (searchRequest) => searchRequest.query,
       );
 
@@ -61,30 +52,25 @@ export const SearchBar = (): React.JSX.Element => {
         return;
       }
 
-      console.log(_.isEqual(fetchedServersData, serversData));
-      setServersData(fetchedServersData);
+      setResults(fetchedServersData);
     } catch {
       console.error("Error while loading data");
     }
-  }, [getRecentSearchRequests]);
+  }, [searchHistory]);
 
   useEffect(() => {
     setMac(navigator.platform.indexOf("Mac") === 0);
 
-    if (typeof window !== "undefined") {
-      const localSearchHistory = localStorage.getItem("SEARCH_HISTORY");
-      const parsedSearchHistory = JSON.parse(localSearchHistory ?? "");
-
-      if (parsedSearchHistory) {
-        setSearchHistory(parsedSearchHistory);
-      }
-    }
+    const localSearchHistory = getLocalSearchHistory();
+    setSearchHistory(localSearchHistory);
   }, []);
 
   useEffect(() => {
-    void loadServers();
-    console.log("LOADING NEW SERVEr");
-  }, [searchHistory]);
+    if (query.trim() === "") {
+      console.log("Loading servers");
+      void loadServers();
+    }
+  }, [query]);
 
   const startSearch = useCallback(
     (query: string) => {
@@ -106,8 +92,6 @@ export const SearchBar = (): React.JSX.Element => {
             JSON.stringify(updatedSearchHistory),
           );
 
-          console.log("UPDATED  TO", updatedSearchHistory);
-
           return updatedSearchHistory;
         });
 
@@ -120,7 +104,7 @@ export const SearchBar = (): React.JSX.Element => {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       setDialogOpen(false);
-      startSearch(serverUrl);
+      startSearch(query);
     }
   };
 
@@ -170,7 +154,7 @@ export const SearchBar = (): React.JSX.Element => {
           const data = await response.json();
           setResults(data);
         } else {
-          setResults([]);
+          console.log("No search results");
         }
 
         setLoading(false);
@@ -215,16 +199,16 @@ export const SearchBar = (): React.JSX.Element => {
                     className="size-4 cursor-pointer"
                     onClick={() => {
                       setDialogOpen(false);
-                      startSearch(serverUrl);
+                      startSearch(query);
                     }}
                     aria-hidden
                   />
                   <input
                     placeholder="Search"
                     className="w-full appearance-none bg-[#333] outline-none"
-                    value={serverUrl}
+                    value={query}
                     onChange={(e) => {
-                      setServerUrl(e.target.value);
+                      setQuery(e.target.value);
                       debouncedSearch(e.target.value);
                     }}
                     onKeyDown={(e) => handleKeyDown(e)}
@@ -236,28 +220,17 @@ export const SearchBar = (): React.JSX.Element => {
                   {isMac ? "⌘ + K" : "Ctrl + K"}
                 </div>
               </div>
-              {serverUrl.length > 0 ? (
-                <Results
-                  results={results}
-                  onClick={(id) => {
-                    setDialogOpen(false);
-                    startSearch(id);
-                  }}
-                  tag="SEARCH_RESULTS"
-                  loading={loading}
-                  query={serverUrl}
-                />
-              ) : (
-                <Results
-                  results={serversData}
-                  onClick={(id) => {
-                    setDialogOpen(false);
-                    startSearch(id);
-                  }}
-                  tag="RECENTLY_SEARCHED"
-                  loading={loading}
-                />
-              )}
+
+              <Results
+                results={results}
+                onClick={(id) => {
+                  setDialogOpen(false);
+                  startSearch(id);
+                }}
+                loading={loading}
+                tag={query.length > 0 ? "SEARCH_RESULTS" : "RECENTLY_SEARCHED"}
+                query={query}
+              />
 
               <div className="flex flex-row justify-end gap-2 rounded-b-md border-t-2 border-[#555] bg-[#333] p-2">
                 <div className="flex flex-row items-center gap-1">
