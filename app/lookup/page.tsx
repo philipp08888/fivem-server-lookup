@@ -35,7 +35,7 @@ export async function generateMetadata({
 
   if (!data) {
     return {
-      title: `Unknown | FiveM Server Lookup`,
+      title: `Unknown | FiveM Server Lookup`,
     };
   }
 
@@ -103,7 +103,7 @@ const Page = async ({ searchParams }: LookupPageProps) => {
   await upsertServer(
     query,
     data.hostname,
-    "https://cdn.discordapp.com/icons/630183489915977756/a_25217891e2fcbcddf64a0180814d02d8.gif",
+    `https://servers-frontend.fivem.net/api/servers/icon/${query}/${data.iconVersion}.png`,
   );
 
   return (

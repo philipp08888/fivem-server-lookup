@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 
 /* TODO: Extend whitelist or find better option for secure image proxy use  */
-const allowedDomains = ["imgur.com", "cdn.discordapp.com", "r2.fivemanage.com"];
+const allowedDomains = [
+  "imgur.com",
+  "cdn.discordapp.com",
+  "r2.fivemanage.com",
+  "servers-frontend.fivem.net",
+];
 const allowedContentTypes = [
   "image/jpeg",
   "image/png",
