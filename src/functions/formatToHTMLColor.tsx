@@ -15,14 +15,14 @@ export function formatToHTMLColor(text: string): React.JSX.Element[] {
       parts.push(
         <span key={lastIndex} className={colorMap[0]}>
           {text.slice(lastIndex, match.index)}
-        </span>
+        </span>,
       );
     }
 
     parts.push(
       <span key={match.index} className={colorClass}>
         {content}
-      </span>
+      </span>,
     );
 
     lastIndex = regex.lastIndex;
@@ -32,7 +32,7 @@ export function formatToHTMLColor(text: string): React.JSX.Element[] {
     parts.push(
       <span key={lastIndex} className={colorMap[0]}>
         {text.slice(lastIndex)}
-      </span>
+      </span>,
     );
   }
 

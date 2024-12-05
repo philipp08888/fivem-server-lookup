@@ -10,9 +10,11 @@ import { formatToHTMLColor } from "@/src/functions/formatToHTMLColor";
 import { getFlagEmoji } from "@/src/functions/getFlagEmoji";
 import { getUpvoteTooltip } from "@/src/functions/getUpvoteTooltip";
 import { isDefined } from "@/src/functions/isDefined";
+import { prisma } from "@/src/prisma";
 import { ServerData } from "@/src/types/ServerData";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import xss from "xss";
 
 interface LookupPageProps {
   searchParams: Promise<{ query?: string }>;
@@ -33,7 +35,7 @@ export async function generateMetadata({
 
   if (!data) {
     return {
-      title: `Unknown | FiveM Server Lookup`,
+      title: `Unknown | FiveM Server Lookup`,
     };
   }
 
@@ -49,11 +51,36 @@ export async function generateMetadata({
  */
 async function fetchDataFromAPI(query: string) {
   const request = await fetch(
-    `https://servers-frontend.fivem.net/api/servers/single/${query}`
+    `https://servers-frontend.fivem.net/api/servers/single/${query}`,
   );
 
   const { Data: data }: { Data: ServerData } = await request.json();
   return data;
+}
+
+async function upsertServer(id: string, hostname: string, image: string) {
+  if (!id || !hostname || !image) {
+    throw new globalThis.Error(
+      "id, hostname, and image are required and cannot be null or empty.",
+    );
+  }
+
+  const sanitizedName = xss(hostname);
+
+  try {
+    await prisma.server.upsert({
+      where: { id: id },
+      update: { hostname: sanitizedName, image: image },
+      create: {
+        id: id,
+        hostname: sanitizedName,
+        image: image,
+      },
+    });
+  } catch (error) {
+    console.error("Error while saving server:", error);
+    throw error;
+  }
 }
 
 const Page = async ({ searchParams }: LookupPageProps) => {
@@ -73,18 +100,24 @@ const Page = async ({ searchParams }: LookupPageProps) => {
     return <Error message="Lookups for this server are disabled." />;
   }
 
+  await upsertServer(
+    query,
+    data.hostname,
+    `https://servers-frontend.fivem.net/api/servers/icon/${query}/${data.iconVersion}.png`,
+  );
+
   return (
     <>
       <Container>
         {data.vars && data.vars.banner_detail && (
-          <div className="w-full bg-black rounded-t-md">
+          <div className="w-full rounded-t-md bg-black">
             <ImageWithFallback
               src={`/api/image-proxy?url=${encodeURIComponent(
-                data.vars.banner_detail
+                data.vars.banner_detail,
               )}`}
               fallbackSrc="/no-banner.svg"
               alt="Banner"
-              className="rounded-t-md max-h-full aspect-auto"
+              className="aspect-auto max-h-full rounded-t-md"
               sizes="100vw"
               width={1920}
               height={1080}
@@ -95,7 +128,7 @@ const Page = async ({ searchParams }: LookupPageProps) => {
             />
           </div>
         )}
-        <div className="flex flex-col gap-4 px-8 py-4 rounded-b-md">
+        <div className="flex flex-col gap-4 rounded-b-md px-8 py-4">
           <div className="flex flex-col gap-2">
             {data.vars.sv_projectName && (
               <>
@@ -105,7 +138,7 @@ const Page = async ({ searchParams }: LookupPageProps) => {
                 <Divider />
               </>
             )}
-            <div className="flex flex-col sm:flex-row justify-center sm:justify-between gap-4">
+            <div className="flex flex-col justify-center gap-4 sm:flex-row sm:justify-between">
               {data.iconVersion && (
                 <ImageWithFallback
                   src={`https://servers-frontend.fivem.net/api/servers/icon/${query}/${data.iconVersion}.png`}
@@ -152,11 +185,11 @@ const Page = async ({ searchParams }: LookupPageProps) => {
           {isDefined(data.vars.tags) && data.vars.tags.length > 0 && (
             <div className="flex flex-col gap-1">
               <Tag>Tags</Tag>
-              <div className="flex flex-row gap-2 flex-wrap">
+              <div className="flex flex-row flex-wrap gap-2">
                 {data.vars.tags.split(",").map((tag, index) => (
                   <span
                     key={tag + index}
-                    className="rounded-md bg-[#888] text-sm px-2 py-1"
+                    className="rounded-md bg-[#888] px-2 py-1 text-sm"
                   >
                     {tag}
                   </span>

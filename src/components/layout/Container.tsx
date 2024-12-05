@@ -10,7 +10,7 @@ interface ContainerProps {
 export const Container = ({ children, className }: ContainerProps) => {
   return (
     <div
-      className={`flex max-w-[1000px] w-full flex-col mt-4 rounded-md mx-auto bg-[#333] shadow-bg ${
+      className={`mx-auto mt-4 flex w-full max-w-[1000px] flex-col rounded-md bg-[#333] shadow-bg ${
         className ? className : ""
       }`}
     >

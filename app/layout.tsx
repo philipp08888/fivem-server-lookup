@@ -1,6 +1,6 @@
 import { Footer } from "@/src/components/layout/Footer";
 import { Logo } from "@/src/components/layout/Logo";
-import { SearchBar } from "@/src/components/SearchBar";
+import { SearchBar } from "@/src/components/search/SearchBar";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "react-tippy/dist/tippy.css";
@@ -25,9 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.className} antialiased overflow-y-scroll scroll-smooth`}
+        className={`${poppins.className} overflow-y-scroll scroll-smooth antialiased`}
       >
-        <div className="flex flex-col min-h-screen px-4">
+        <div className="flex min-h-screen flex-col px-4">
           <Logo />
           <SearchBar />
           <main className="flex-grow">{children}</main>

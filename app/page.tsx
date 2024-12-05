@@ -5,7 +5,7 @@ import Link from "next/link";
 export default async function Page() {
   return (
     <>
-      <Container className="px-8 py-4 gap-2">
+      <Container className="gap-2 px-8 py-4">
         <div className="flex flex-col gap-2">
           <Tag>How To - Explanation</Tag>
           <p>
@@ -22,7 +22,7 @@ export default async function Page() {
           <Tag>Need Support?</Tag>
           <Link
             href="https://discord.gg/S8Z77aS"
-            className="text-blue-500 font-bold"
+            className="font-bold text-blue-500"
             rel="noopener noreferrer"
           >
             Discord

@@ -12,13 +12,13 @@ interface ResourceSectionProps {
 
 export const ResourceSection = ({ resources }: ResourceSectionProps) => {
   return (
-    <Container className="px-8 py-4 gap-2">
+    <Container className="gap-2 px-8 py-4">
       <Accordion title={<Tag>Resources ({resources.length})</Tag>}>
         <PaginationList
           items={resources}
           pageSize={10}
           renderItem={(resource) => (
-            <div className="flex justify-between items-center py-2 px-4 bg-[#444] shadow-bg rounded-sm">
+            <div className="flex items-center justify-between rounded-sm bg-[#444] px-4 py-2 shadow-bg">
               {resource}
             </div>
           )}

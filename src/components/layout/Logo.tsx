@@ -6,7 +6,7 @@ import Link from "next/link";
 export const Logo = () => {
   return (
     <Link
-      className="flex w-full justify-center py-4 max-w-[250px] mx-auto"
+      className="mx-auto flex w-full max-w-[250px] justify-center py-4"
       href="/"
     >
       <Image

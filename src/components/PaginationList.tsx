@@ -54,7 +54,7 @@ export const PaginationList = <T,>({
         placeholder="Search..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="mb-4 p-2 rounded bg-[#444] outline-none shadow-bg select-none"
+        className="mb-4 select-none rounded bg-[#444] p-2 shadow-bg outline-none"
       />
 
       <div style={{ minHeight: `${containerHeight}px` }}>
@@ -82,11 +82,11 @@ export const PaginationList = <T,>({
         </AnimatePresence>
       </div>
 
-      <div className="flex justify-between mt-4">
+      <div className="mt-4 flex justify-between">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
           disabled={currentPage === 0}
-          className="px-4 py-2 bg-white text-black font-medium rounded disabled:opacity-50 disabled:font-normal"
+          className="rounded bg-white px-4 py-2 font-medium text-black disabled:font-normal disabled:opacity-50"
         >
           Back
         </button>
@@ -98,7 +98,7 @@ export const PaginationList = <T,>({
             setCurrentPage((prev) => (prev + 1 < totalPages ? prev + 1 : prev))
           }
           disabled={currentPage >= totalPages - 1}
-          className="px-4 py-2 bg-white text-black font-medium rounded disabled:opacity-50 disabled:font-normal"
+          className="rounded bg-white px-4 py-2 font-medium text-black disabled:font-normal disabled:opacity-50"
         >
           Next
         </button>

@@ -9,23 +9,23 @@ import { Tag } from "../Tag";
 
 export const PlayerSection = ({ players }: { players: ServerDataPlayer[] }) => {
   return (
-    <Container className="px-8 py-4 gap-2">
+    <Container className="gap-2 px-8 py-4">
       <Accordion title={<Tag>Players ({players.length})</Tag>}>
         <PaginationList
           items={players.sort((a, b) => a.id - b.id)}
           pageSize={10}
           filterKey="name"
           renderItem={(player) => (
-            <div className="flex justify-between items-center py-2 px-4 bg-[#444] shadow-bg rounded-sm">
-              <div className="flex flex-row gap-1 items-center">
-                <span className="font-mono text-[#aaa] text-xs select-none w-12 text-right">
+            <div className="flex items-center justify-between rounded-sm bg-[#444] px-4 py-2 shadow-bg">
+              <div className="flex flex-row items-center gap-1">
+                <span className="w-12 select-none text-right font-mono text-xs text-[#aaa]">
                   {player.id} |
                 </span>
                 {player.name}
               </div>
               <div
                 style={{ backgroundColor: getPingColor(player.ping) }}
-                className="rounded-full h-2 w-2"
+                className="h-2 w-2 rounded-full"
                 title={`${player.ping}ms`}
               />
             </div>
