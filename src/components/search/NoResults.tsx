@@ -1,9 +1,11 @@
 "use client";
 
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
+import React from "react";
+import { TEST_IDS } from "@/src/functions/testIds";
 
 interface NoResultsProps {
-  query?: string;
+  query: string;
   onClick: () => void;
 }
 
@@ -21,17 +23,16 @@ export const NoResults = ({
           indexed, you must use the Id for the first time
         </p>
       </div>
-      {query && query !== "" && (
-        <div
-          className="flex w-full cursor-pointer justify-between rounded-md px-4 py-2 hover:bg-[#444]"
-          onClick={onClick}
-        >
-          Search with Id: {query}
-          <div className="flex items-center">
-            <ArrowUpRightIcon className="size-4" />
-          </div>
+      <div
+        className="flex w-full cursor-pointer justify-between rounded-md px-4 py-2 hover:bg-[#444]"
+        onClick={onClick}
+        data-testid={TEST_IDS.RESULTS.NO_RESULTS_SEARCH}
+      >
+        Search with Id: {query}
+        <div className="flex items-center">
+          <ArrowUpRightIcon className="size-4" />
         </div>
-      )}
+      </div>
     </div>
   );
 };

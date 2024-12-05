@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     );
   }
 
-  if (typeof query !== "string" || query.trim() === "") {
+  if (query.trim() === "") {
     return NextResponse.json(
       {
         error: "Please provide a valid query parameter",

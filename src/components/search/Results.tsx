@@ -1,23 +1,20 @@
 "use client";
 
 import { Server } from "@prisma/client";
-import _ from "lodash";
-import { motion, Variants } from "motion/react";
-import { memo, useEffect, useState } from "react";
+import { AnimatePresence, motion, Variants } from "motion/react";
+import React, { memo, useEffect, useState } from "react";
 import { Tag } from "../Tag";
-import { NoResults } from "./NoResults";
 import { ServerTile } from "./ServerTile";
-import { ServerTileSkeleton } from "./ServerTile.skeleton";
+import { SearchMode } from "@/src/components/search/SearchBar";
+import _ from "lodash";
 
 interface ResultsProps {
   results: Server[];
   onClick: (id: string) => void;
-  tag: "RECENTLY_SEARCHED" | "SEARCH_RESULTS";
-  loading: boolean;
-  query?: string;
+  mode: SearchMode;
 }
 
-const containerVariants: Variants = {
+export const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -27,84 +24,58 @@ const containerVariants: Variants = {
   },
 };
 
-const itemVariants: Variants = {
+export const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -20 },
 };
 
 export const Results = memo(
-  ({
-    results,
-    onClick,
-    tag,
-    loading,
-    query,
-  }: ResultsProps): React.JSX.Element | null => {
-    const [finalResults, setFinalResults] = useState<Server[]>(results);
+  ({ results, onClick, mode }: ResultsProps): React.JSX.Element | null => {
+    const [renderResults, setRenderResults] = useState<Server[]>(results);
 
     useEffect(() => {
-      if (!_.isEqual(results, finalResults)) {
-        setFinalResults(results);
+      if (!_.isEqual(renderResults, results)) {
+        setRenderResults(results);
       }
-    }, [results, finalResults]);
+    }, [renderResults, results]);
 
-    if (loading && !_.isEqual(results, finalResults)) {
-      return (
-        <motion.div
-          className="flex min-h-32 flex-col gap-1"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {Array(1)
-            .fill(0)
-            .map((_, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <ServerTileSkeleton />
-              </motion.div>
-            ))}
-        </motion.div>
-      );
-    }
-
-    if (finalResults.length === 0) {
-      switch (tag) {
-        case "RECENTLY_SEARCHED": {
-          return null;
-        }
-        case "SEARCH_RESULTS": {
-          return (
-            <NoResults query={query} onClick={() => onClick(query ?? "")} />
-          );
-        }
-      }
+    if (renderResults.length === 0) {
+      return null;
     }
 
     return (
-      <div className="flex flex-col gap-2 border-t-2 border-[#444] px-4 pb-4 pt-2">
-        {tag === "RECENTLY_SEARCHED" && <Tag>Recently searched servers</Tag>}
-        {tag === "SEARCH_RESULTS" && <Tag>Search Results</Tag>}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col gap-2 border-t-2 border-[#444] px-4 pb-4 pt-2"
+      >
+        {mode === "RECENTLY_SEARCHED" && <Tag>Recently searched servers</Tag>}
+        {mode === "RESULTS" && <Tag>Search Results</Tag>}
 
-        <motion.div
-          className="flex flex-col gap-1"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {finalResults.map((result) => (
-            <motion.div key={result.id} variants={itemVariants}>
-              <ServerTile
-                onClick={() => onClick(result.id)}
-                hostname={result.hostname}
-                imageSrc={`/api/image-proxy?url=${encodeURIComponent(
-                  result.image,
-                )}`}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
+        <AnimatePresence>
+          <motion.div
+            className="flex flex-col gap-1"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {renderResults.map((result) => (
+              <motion.div key={result.id} variants={itemVariants} layout>
+                <ServerTile
+                  onClick={() => onClick(result.id)}
+                  hostname={result.hostname}
+                  imageSrc={`/api/image-proxy?url=${encodeURIComponent(
+                    result.image,
+                  )}`}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </motion.div>
     );
   },
 );

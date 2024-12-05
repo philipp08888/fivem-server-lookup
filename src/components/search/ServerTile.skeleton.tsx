@@ -1,6 +1,7 @@
 "use client";
 
 import { TEST_IDS } from "@/src/functions/testIds";
+import React from "react";
 
 export const ServerTileSkeleton = (): React.JSX.Element => {
   return (

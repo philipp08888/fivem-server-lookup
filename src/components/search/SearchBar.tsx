@@ -6,15 +6,21 @@ import { Server } from "@prisma/client";
 import _ from "lodash";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Results } from "./Results";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { containerVariants, itemVariants, Results } from "./Results";
+import { NoResults } from "@/src/components/search/NoResults";
+import { ServerTileSkeleton } from "@/src/components/search/ServerTile.skeleton";
+import { useSearchHistory } from "@/src/hooks/useSearchHistory";
 
 const ID_REGEX = /(?:cfx\.re\/(?:join\/)?)?([a-zA-Z0-9]+)/;
 
-type SearchRequest = {
-  query: string;
-  date: Date;
-};
+export type SearchMode = "RECENTLY_SEARCHED" | "RESULTS";
 
 export const SearchBar = (): React.JSX.Element => {
   const [query, setQuery] = useState<string>("");
@@ -28,19 +34,18 @@ export const SearchBar = (): React.JSX.Element => {
   const [isMac, setMac] = useState<boolean>(false);
 
   const [results, setResults] = useState<Server[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [searchHistory, setSearchHistory] = useState<SearchRequest[]>([]);
+  const prevResults = useRef<Server[]>([]);
 
-  const getLocalSearchHistory = (): SearchRequest[] => {
-    if (typeof window === "undefined") return [];
+  const [mode, setMode] = useState<SearchMode>("RECENTLY_SEARCHED");
 
-    const history = localStorage.getItem("SEARCH_HISTORY");
-    return history ? JSON.parse(history) : [];
-  };
+  const { searchHistory, addSearchRequest } = useSearchHistory();
 
   const loadServers = useCallback(async () => {
     try {
+      setIsLoading(true);
+
       const serverIds = searchHistory.map(
         (searchRequest) => searchRequest.query,
       );
@@ -53,22 +58,29 @@ export const SearchBar = (): React.JSX.Element => {
       }
 
       setResults(fetchedServersData);
-    } catch {
-      console.error("Error while loading data");
+    } catch (error) {
+      console.error("Error while loading data:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [searchHistory]);
 
   useEffect(() => {
     setMac(navigator.platform.indexOf("Mac") === 0);
-
-    const localSearchHistory = getLocalSearchHistory();
-    setSearchHistory(localSearchHistory);
   }, []);
 
   useEffect(() => {
-    if (query.trim() === "") {
-      console.log("Loading servers");
+    if (mode === "RECENTLY_SEARCHED") {
       void loadServers();
+      console.log("Mode has changed, servers have been loaded");
+    }
+  }, [loadServers, mode]);
+
+  useEffect(() => {
+    if (query.length === 0) {
+      setMode("RECENTLY_SEARCHED");
+    } else {
+      setMode("RESULTS");
     }
   }, [query]);
 
@@ -77,28 +89,11 @@ export const SearchBar = (): React.JSX.Element => {
       const match = query.trim().match(ID_REGEX);
 
       if (match) {
-        setSearchHistory((prevHistory) => {
-          const updatedSearchHistory = [
-            ...prevHistory.slice(0, 4),
-            { query: query, date: new Date() },
-          ];
-
-          updatedSearchHistory.sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-          );
-
-          localStorage.setItem(
-            "SEARCH_HISTORY",
-            JSON.stringify(updatedSearchHistory),
-          );
-
-          return updatedSearchHistory;
-        });
-
+        addSearchRequest(match[1]);
         router.push(`/lookup?query=${encodeURIComponent(match[1])}`);
       }
     },
-    [router],
+    [addSearchRequest, router],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -142,22 +137,32 @@ export const SearchBar = (): React.JSX.Element => {
     };
   }, []);
 
-  const debouncedSearch = useMemo(
+  const fetchResults = useMemo(
     () =>
-      _.debounce(async (searchTerm: string) => {
-        setLoading(true);
-
-        if (searchTerm) {
-          const response = await fetch(
-            `/api/search?query=${encodeURIComponent(searchTerm)}`,
-          );
-          const data = await response.json();
-          setResults(data);
-        } else {
-          console.log("No search results");
+      _.debounce(async (searchQuery: string) => {
+        if (searchQuery.trim() === "") {
+          setIsLoading(false);
+          setResults([]);
+          return;
         }
 
-        setLoading(false);
+        try {
+          const response = await fetch(
+            `/api/search?query=${encodeURIComponent(searchQuery)}`,
+          );
+          const data = await response.json();
+
+          if (!_.isEqual(data, prevResults.current)) {
+            console.log("Data is not equal!");
+            setResults(data);
+            prevResults.current = data;
+          }
+        } catch (error) {
+          console.error("Error while fetching results:", error);
+          setResults([]);
+        } finally {
+          setIsLoading(false);
+        }
       }, 500),
     [],
   );
@@ -189,7 +194,7 @@ export const SearchBar = (): React.JSX.Element => {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
               className="relative flex w-full max-w-xl flex-col rounded-md bg-[#333] shadow-bg"
               ref={dialogRef}
             >
@@ -208,8 +213,11 @@ export const SearchBar = (): React.JSX.Element => {
                     className="w-full appearance-none bg-[#333] outline-none"
                     value={query}
                     onChange={(e) => {
-                      setQuery(e.target.value);
-                      debouncedSearch(e.target.value);
+                      const value = e.target.value;
+
+                      setQuery(value);
+                      setIsLoading(true);
+                      fetchResults(value);
                     }}
                     onKeyDown={(e) => handleKeyDown(e)}
                     ref={inputRef}
@@ -221,16 +229,44 @@ export const SearchBar = (): React.JSX.Element => {
                 </div>
               </div>
 
-              <Results
-                results={results}
-                onClick={(id) => {
-                  setDialogOpen(false);
-                  startSearch(id);
-                }}
-                loading={loading}
-                tag={query.length > 0 ? "SEARCH_RESULTS" : "RECENTLY_SEARCHED"}
-                query={query}
-              />
+              {!isLoading && results.length === 0 && mode === "RESULTS" && (
+                <NoResults
+                  onClick={() => {
+                    setDialogOpen(false);
+                    startSearch(query);
+                  }}
+                  query={query}
+                />
+              )}
+
+              {isLoading && (
+                <motion.div
+                  className="flex flex-col gap-1 px-4 pt-2"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <div className="h-2 w-16 animate-pulse rounded-md bg-[#444]" />
+                  {Array(1)
+                    .fill(0)
+                    .map((_, index) => (
+                      <motion.div key={index} variants={itemVariants}>
+                        <ServerTileSkeleton />
+                      </motion.div>
+                    ))}
+                </motion.div>
+              )}
+
+              {!isLoading && (
+                <Results
+                  results={results}
+                  onClick={(id) => {
+                    setDialogOpen(false);
+                    startSearch(id);
+                  }}
+                  mode={mode}
+                />
+              )}
 
               <div className="flex flex-row justify-end gap-2 rounded-b-md border-t-2 border-[#555] bg-[#333] p-2">
                 <div className="flex flex-row items-center gap-1">
