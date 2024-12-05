@@ -72,7 +72,6 @@ export const SearchBar = (): React.JSX.Element => {
   useEffect(() => {
     if (mode === "RECENTLY_SEARCHED") {
       void loadServers();
-      console.log("Mode has changed, servers have been loaded");
     }
   }, [loadServers, mode]);
 
@@ -142,7 +141,6 @@ export const SearchBar = (): React.JSX.Element => {
       _.debounce(async (searchQuery: string) => {
         if (searchQuery.trim() === "") {
           setIsLoading(false);
-          setResults([]);
           return;
         }
 
@@ -153,7 +151,6 @@ export const SearchBar = (): React.JSX.Element => {
           const data = await response.json();
 
           if (!_.isEqual(data, prevResults.current)) {
-            console.log("Data is not equal!");
             setResults(data);
             prevResults.current = data;
           }
