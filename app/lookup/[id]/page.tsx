@@ -15,23 +15,24 @@ import { notFound } from "next/navigation";
 import { PlayIcon } from "@heroicons/react/24/outline";
 import fetchDataFromAPI from "@/src/functions/fetchDataFromAPI";
 import upsertServer from "@/src/functions/upsertServer";
+import { sanitizeColorCodes } from "@/src/functions/sanitizeColorCodes";
 
 interface LookupPageProps {
-  searchParams: Promise<{ query?: string }>;
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({
-  searchParams,
+  params,
 }: LookupPageProps): Promise<Metadata> {
-  const query = (await searchParams).query;
+  const id = (await params).id;
 
-  if (!query) {
+  if (!id) {
     return {
       title: `Error | FiveM Server Lookup`,
     };
   }
 
-  const data = await fetchDataFromAPI(query);
+  const data = await fetchDataFromAPI(id);
 
   if (!data) {
     return {
@@ -40,18 +41,14 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${data.hostname} | FiveM Server Lookup`,
+    title: `${sanitizeColorCodes(data.hostname)} | FiveM Server Lookup`,
+    description: "Get detailed information about this server",
   };
 }
 
-const Page = async ({ searchParams }: LookupPageProps) => {
-  const query = (await searchParams).query;
-
-  if (!query) {
-    return <Error message="Please provide an FiveM Server Id!" />;
-  }
-
-  const data = await fetchDataFromAPI(query);
+const Page = async ({ params }: LookupPageProps) => {
+  const id = (await params).id;
+  const data = await fetchDataFromAPI(id);
 
   if (!data) {
     notFound();
@@ -62,9 +59,9 @@ const Page = async ({ searchParams }: LookupPageProps) => {
   }
 
   await upsertServer(
-    query,
+    id,
     data.hostname,
-    `https://servers-frontend.fivem.net/api/servers/icon/${query}/${data.iconVersion}.png`,
+    `https://servers-frontend.fivem.net/api/servers/icon/${id}/${data.iconVersion}.png`,
   );
 
   return (
@@ -102,7 +99,7 @@ const Page = async ({ searchParams }: LookupPageProps) => {
             <div className="flex flex-col justify-center gap-4 sm:flex-row sm:justify-between">
               {data.iconVersion && (
                 <ImageWithFallback
-                  src={`https://servers-frontend.fivem.net/api/servers/icon/${query}/${data.iconVersion}.png`}
+                  src={`https://servers-frontend.fivem.net/api/servers/icon/${id}/${data.iconVersion}.png`}
                   className="rounded-md"
                   alt="Server Icon"
                   width={1920}
@@ -171,7 +168,7 @@ const Page = async ({ searchParams }: LookupPageProps) => {
                     >
                       <p className="text-sm">{endPoint}</p>
                       <a href={`fivem://${endPoint}`} title="Connect to server">
-                        <PlayIcon className="text-primary size-5 [&>path]:stroke-[2]" />
+                        <PlayIcon className="size-5 text-primary [&>path]:stroke-[2]" />
                       </a>
                     </li>
                   ))}

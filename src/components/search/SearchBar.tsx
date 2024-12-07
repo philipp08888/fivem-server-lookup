@@ -1,6 +1,6 @@
 "use client";
 
-import { getServersByIds } from "@/app/lookup/actions";
+import { getServersByIds } from "@/app/lookup/[id]/actions";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Server } from "@prisma/client";
 import _ from "lodash";
@@ -90,7 +90,7 @@ export const SearchBar = (): React.JSX.Element => {
 
       if (match) {
         addSearchRequest(match[1]);
-        router.push(`/lookup?query=${encodeURIComponent(match[1])}`);
+        router.push(`/lookup/${match[1]}`);
       }
     },
     [addSearchRequest, router],

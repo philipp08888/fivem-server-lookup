@@ -15,12 +15,21 @@ export const NoResults = ({
 }: NoResultsProps): React.JSX.Element => {
   return (
     <div className="flex min-h-32 flex-col justify-center gap-2 border-t-2 border-[#555] px-4 pb-4 pt-2">
-      <div className="flex flex-col gap-1 rounded-md bg-[#444] p-2">
+      <div className="flex flex-col gap-1 rounded-md bg-[#444] p-4">
         <h1 className="text-xl">No results found</h1>
         <p className="text-sm text-[#cccccc87]">
-          Note: A server can only be reached by its name via the search when it
-          is used on this page for the first time. If the server is not yet
-          indexed, you must use the Id for the first time
+          Note: A server can only be found by its name if it has already been
+          searched for on this page. If the server hasn&#39;t been indexed yet,
+          you need to use the server&#39;s ID for the first search!
+          <br /> <br />
+          If you have any further questions, feel free to reach out on{" "}
+          <a
+            className="font-bold text-primary"
+            href="https://discord.gg/S8Z77aS"
+          >
+            Discord
+          </a>
+          .
         </p>
       </div>
       <div
