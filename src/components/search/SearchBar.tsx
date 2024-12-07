@@ -162,7 +162,7 @@ export const SearchBar = (): React.JSX.Element => {
           setIsLoading(false);
         }
       }, 500),
-    [results],
+    [],
   );
 
   useEffect(() => {
