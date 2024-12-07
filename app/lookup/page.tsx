@@ -15,6 +15,7 @@ import { ServerData } from "@/src/types/ServerData";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import xss from "xss";
+import { PlayIcon } from "@heroicons/react/24/outline";
 
 interface LookupPageProps {
   searchParams: Promise<{ query?: string }>;
@@ -194,6 +195,27 @@ const Page = async ({ searchParams }: LookupPageProps) => {
                     {tag}
                   </span>
                 ))}
+              </div>
+            </div>
+          )}
+          {data.connectEndPoints[0] !==
+            "https://private-placeholder.cfx.re/" && (
+            <div className="flex flex-col gap-1">
+              <Tag>Endpoints</Tag>
+              <div className="flex flex-row gap-2">
+                <ul className="flex flex-col flex-wrap gap-1">
+                  {data.connectEndPoints.map((endPoint) => (
+                    <li
+                      key={endPoint}
+                      className="flex flex-row items-center gap-2 rounded-md bg-[#444] px-2 py-1"
+                    >
+                      <p className="text-sm">{endPoint}</p>
+                      <a href={`fivem://${endPoint}`} title="Connect to server">
+                        <PlayIcon className="text-primary size-5 [&>path]:stroke-[2]" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           )}
