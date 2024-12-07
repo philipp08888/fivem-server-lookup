@@ -10,12 +10,11 @@ import { formatToHTMLColor } from "@/src/functions/formatToHTMLColor";
 import { getFlagEmoji } from "@/src/functions/getFlagEmoji";
 import { getUpvoteTooltip } from "@/src/functions/getUpvoteTooltip";
 import { isDefined } from "@/src/functions/isDefined";
-import { prisma } from "@/src/prisma";
-import { ServerData } from "@/src/types/ServerData";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import xss from "xss";
 import { PlayIcon } from "@heroicons/react/24/outline";
+import fetchDataFromAPI from "@/src/functions/fetchDataFromAPI";
+import upsertServer from "@/src/functions/upsertServer";
 
 interface LookupPageProps {
   searchParams: Promise<{ query?: string }>;
@@ -43,45 +42,6 @@ export async function generateMetadata({
   return {
     title: `${data.hostname} | FiveM Server Lookup`,
   };
-}
-
-/**
- *
- * @param query cfx server id of the server
- * @returns returns data object of server relevant details
- */
-async function fetchDataFromAPI(query: string) {
-  const request = await fetch(
-    `https://servers-frontend.fivem.net/api/servers/single/${query}`,
-  );
-
-  const { Data: data }: { Data: ServerData } = await request.json();
-  return data;
-}
-
-async function upsertServer(id: string, hostname: string, image: string) {
-  if (!id || !hostname || !image) {
-    throw new globalThis.Error(
-      "id, hostname, and image are required and cannot be null or empty.",
-    );
-  }
-
-  const sanitizedName = xss(hostname);
-
-  try {
-    await prisma.server.upsert({
-      where: { id: id },
-      update: { hostname: sanitizedName, image: image },
-      create: {
-        id: id,
-        hostname: sanitizedName,
-        image: image,
-      },
-    });
-  } catch (error) {
-    console.error("Error while saving server:", error);
-    throw error;
-  }
 }
 
 const Page = async ({ searchParams }: LookupPageProps) => {

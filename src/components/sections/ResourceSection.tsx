@@ -5,12 +5,13 @@ import { Accordion } from "../Accordion";
 import { Container } from "../layout/Container";
 import { PaginationList } from "../PaginationList";
 import { Tag } from "../Tag";
+import { memo } from "react";
 
 interface ResourceSectionProps {
   resources: ServerData["resources"];
 }
 
-export const ResourceSection = ({ resources }: ResourceSectionProps) => {
+export const ResourceSection = memo(({ resources }: ResourceSectionProps) => {
   return (
     <Container className="gap-2 px-8 py-4">
       <Accordion title={<Tag>Resources ({resources.length})</Tag>}>
@@ -26,4 +27,6 @@ export const ResourceSection = ({ resources }: ResourceSectionProps) => {
       </Accordion>
     </Container>
   );
-};
+});
+
+ResourceSection.displayName = "ResourceSection";
