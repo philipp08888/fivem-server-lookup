@@ -58,6 +58,7 @@ export const SearchBar = (): React.JSX.Element => {
       }
 
       setResults(fetchedServersData);
+      prevResults.current = fetchedServersData;
     } catch (error) {
       console.error("Error while loading data:", error);
     } finally {
@@ -161,7 +162,7 @@ export const SearchBar = (): React.JSX.Element => {
           setIsLoading(false);
         }
       }, 500),
-    [],
+    [results],
   );
 
   useEffect(() => {
