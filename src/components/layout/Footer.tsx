@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
-
 export const Footer = () => {
   return (
-    <footer className="flex h-full items-center justify-center gap-2 py-2">
-      &copy; {new Date().getFullYear()}
-      <Link href="https://discord.gg/S8Z77aS">raw</Link>
+    <footer className="flex h-full flex-col items-center justify-center py-2">
+      <p className="text-sm text-[#cccccc96]">
+        This website is not way affiliated with cfx or a FiveM server.
+      </p>
     </footer>
   );
 };

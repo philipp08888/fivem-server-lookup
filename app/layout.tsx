@@ -1,7 +1,7 @@
 import { Footer } from "@/src/components/layout/Footer";
 import { Logo } from "@/src/components/layout/Logo";
 import { SearchBar } from "@/src/components/search/SearchBar";
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "react-tippy/dist/tippy.css";
 import "./globals.css";
