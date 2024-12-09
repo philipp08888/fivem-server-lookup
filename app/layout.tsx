@@ -1,6 +1,7 @@
 import { Footer } from "@/src/components/layout/Footer";
 import { Logo } from "@/src/components/layout/Logo";
 import { SearchBar } from "@/src/components/search/SearchBar";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "react-tippy/dist/tippy.css";
@@ -32,6 +33,7 @@ export default function RootLayout({
           <SearchBar />
           <main className="flex-grow">{children}</main>
           <Footer />
+          <SpeedInsights />
         </div>
       </body>
     </html>
