@@ -1,6 +1,7 @@
 import { Footer } from "@/src/components/layout/Footer";
 import { Logo } from "@/src/components/layout/Logo";
 import { SearchBar } from "@/src/components/search/SearchBar";
+import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Metadata } from "next";
 import { Poppins } from "next/font/google";
@@ -34,6 +35,7 @@ export default function RootLayout({
           <main className="flex-grow">{children}</main>
           <Footer />
           <SpeedInsights />
+          <Analytics />
         </div>
       </body>
     </html>
