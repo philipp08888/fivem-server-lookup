@@ -6,16 +6,16 @@ import { Container } from "@/src/components/layout/Container";
 import { PlayerSection } from "@/src/components/sections/PlayerSection";
 import { ResourceSection } from "@/src/components/sections/ResourceSection";
 import { Tag } from "@/src/components/Tag";
+import fetchDataFromAPI from "@/src/functions/fetchDataFromAPI";
 import { formatToHTMLColor } from "@/src/functions/formatToHTMLColor";
 import { getFlagEmoji } from "@/src/functions/getFlagEmoji";
 import { getUpvoteTooltip } from "@/src/functions/getUpvoteTooltip";
 import { isDefined } from "@/src/functions/isDefined";
+import { sanitizeColorCodes } from "@/src/functions/sanitizeColorCodes";
+import upsertServer from "@/src/functions/upsertServer";
+import { PlayIcon } from "@heroicons/react/24/outline";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { PlayIcon } from "@heroicons/react/24/outline";
-import fetchDataFromAPI from "@/src/functions/fetchDataFromAPI";
-import upsertServer from "@/src/functions/upsertServer";
-import { sanitizeColorCodes } from "@/src/functions/sanitizeColorCodes";
 
 interface LookupPageProps {
   params: Promise<{ id: string }>;
@@ -68,23 +68,13 @@ const Page = async ({ params }: LookupPageProps) => {
     <>
       <Container>
         {data.vars && data.vars.banner_detail && (
-          <div className="w-full rounded-t-md bg-black">
-            <ImageWithFallback
-              src={`/api/image-proxy?url=${encodeURIComponent(
-                data.vars.banner_detail,
-              )}`}
-              fallbackSrc="/no-banner.svg"
-              alt="Banner"
-              className="aspect-auto max-h-full rounded-t-md"
-              sizes="100vw"
-              width={1920}
-              height={1080}
-              style={{
-                width: "100%",
-                height: "auto",
-              }}
-            />
-          </div>
+          <div
+            className="h-16 w-full rounded-t-md bg-black bg-cover bg-center"
+            style={{
+              backgroundColor: "#444",
+              backgroundImage: `url(${data.vars.banner_detail})`,
+            }}
+          />
         )}
         <div className="flex flex-col gap-4 rounded-b-md px-8 py-4">
           <div className="flex flex-col gap-2">
