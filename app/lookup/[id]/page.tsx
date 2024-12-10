@@ -67,15 +67,13 @@ const Page = async ({ params }: LookupPageProps) => {
   return (
     <>
       <Container>
-        {data.vars && data.vars.banner_detail && (
-          <div
-            className="h-16 w-full rounded-t-md bg-black bg-cover bg-center"
-            style={{
-              backgroundColor: "#444",
-              backgroundImage: `url(${data.vars.banner_detail})`,
-            }}
-          />
-        )}
+        <div
+          className="h-16 w-full rounded-t-md bg-black bg-cover bg-center"
+          style={{
+            backgroundColor: "#444",
+            backgroundImage: `url(${data.vars.banner_detail ?? ""})`,
+          }}
+        />
         <div className="flex flex-col gap-4 rounded-b-md px-8 py-4">
           <div className="flex flex-col gap-2">
             {data.vars.sv_projectName && (
