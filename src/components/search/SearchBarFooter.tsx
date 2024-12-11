@@ -13,7 +13,7 @@ export const SearchBarFooter = (): React.JSX.Element => {
         <span className="select-none rounded-md bg-[#444] px-2 py-1 text-[#ccc] shadow-md">
           <ChevronDownIcon className="size-4" />
         </span>
-        navigate
+        Navigate
       </div>
       <div className="flex flex-row items-center gap-1">
         <span className="select-none rounded-md bg-[#444] px-2 py-1 text-[#ccc] shadow-md">

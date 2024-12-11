@@ -209,7 +209,7 @@ export const SearchBar = (): React.JSX.Element => {
                   />
                   <input
                     placeholder="Search"
-                    className="w-full appearance-none bg-[#333] outline-none"
+                    className="w-full appearance-none bg-[#333] text-lg outline-none"
                     value={query}
                     onChange={(e) => {
                       const value = e.target.value;

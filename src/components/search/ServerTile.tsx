@@ -20,7 +20,7 @@ export const ServerTile = ({
 }: ServerTileProps): React.JSX.Element => {
   return (
     <div
-      className={`flex w-full cursor-pointer flex-row justify-between gap-4 rounded-md p-2 ${isFocused ? "bg-[#444]" : "bg-transparent"} hover:bg-[#444]`}
+      className={`flex w-full cursor-pointer flex-row justify-between gap-4 rounded-md p-2 transition-colors duration-200 ease-in-out ${isFocused ? "bg-[#444]" : "bg-transparent"} hover:bg-[#444]`}
       onClick={onClick}
       data-testid={TEST_IDS.RESULTS.SERVER_TILE(hostname)}
     >

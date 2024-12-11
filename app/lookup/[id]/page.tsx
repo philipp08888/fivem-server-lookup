@@ -110,7 +110,7 @@ const Page = async ({ params }: LookupPageProps) => {
               </span>
             </div>
           </div>
-          <div className="flex flex-row justify-between gap-2">
+          <div className="flex flex-row flex-wrap justify-between gap-2">
             <Column
               name="Upvotes"
               value={data.upvotePower}
