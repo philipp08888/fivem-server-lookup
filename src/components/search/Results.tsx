@@ -1,12 +1,12 @@
 "use client";
 
+import { SearchMode } from "@/src/components/search/SearchBar";
 import { Server } from "@prisma/client";
+import _ from "lodash";
 import { AnimatePresence, motion, Variants } from "motion/react";
 import React, { memo, useEffect, useState } from "react";
 import { Tag } from "../Tag";
 import { ServerTile } from "./ServerTile";
-import { SearchMode } from "@/src/components/search/SearchBar";
-import _ from "lodash";
 
 interface ResultsProps {
   results: Server[];
@@ -33,12 +33,33 @@ export const itemVariants: Variants = {
 export const Results = memo(
   ({ results, onClick, mode }: ResultsProps): React.JSX.Element | null => {
     const [renderResults, setRenderResults] = useState<Server[]>(results);
+    const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
     useEffect(() => {
       if (!_.isEqual(renderResults, results)) {
         setRenderResults(results);
       }
     }, [renderResults, results]);
+
+    useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "ArrowUp") {
+          setSelectedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+        } else if (event.key === "ArrowDown") {
+          setSelectedIndex((prevIndex) =>
+            Math.min(prevIndex + 1, renderResults.length - 1),
+          );
+        } else if (event.key === "Enter") {
+          onClick(renderResults[selectedIndex].id);
+        }
+      };
+
+      window.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }, [selectedIndex, renderResults, onClick]);
 
     if (renderResults.length === 0) {
       return null;
@@ -50,7 +71,7 @@ export const Results = memo(
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col gap-2 border-t-2 border-[#444] px-4 pb-4 pt-2"
+        className="flex flex-col gap-2 border-t-2 border-[#555] px-4 pb-4 pt-2"
       >
         {mode === "RECENTLY_SEARCHED" && <Tag>Recently searched servers</Tag>}
         {mode === "RESULTS" && <Tag>Search Results</Tag>}
@@ -62,14 +83,20 @@ export const Results = memo(
             initial="hidden"
             animate="visible"
           >
-            {renderResults.map((result) => (
-              <motion.div key={result.id} variants={itemVariants} layout>
+            {renderResults.map((result, index) => (
+              <motion.div
+                key={result.id}
+                variants={itemVariants}
+                layout
+                onMouseEnter={() => setSelectedIndex(index)}
+              >
                 <ServerTile
                   onClick={() => onClick(result.id)}
                   hostname={result.hostname}
                   imageSrc={`/api/image-proxy?url=${encodeURIComponent(
                     result.image,
                   )}`}
+                  isFocused={selectedIndex === index}
                 />
               </motion.div>
             ))}
