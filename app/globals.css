@@ -4,7 +4,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #222;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,5 +17,4 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: "Geist", Arial, Helvetica, sans-serif;
 }

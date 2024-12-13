@@ -1,9 +1,9 @@
 "use client";
 
-import { ReactNode, useRef, useState } from "react";
+import classNames from "classnames";
+import { PropsWithChildren, ReactNode, useRef, useState } from "react";
 
 interface TooltipProps {
-  children: ReactNode;
   content: ReactNode;
   position?: "left" | "right" | "top" | "bottom";
   delay?: number;
@@ -14,7 +14,7 @@ export const Tooltip = ({
   content,
   position = "right",
   delay = 200,
-}: TooltipProps): React.JSX.Element => {
+}: PropsWithChildren<TooltipProps>): React.JSX.Element => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -44,7 +44,10 @@ export const Tooltip = ({
       {children}
       {isVisible && (
         <div
-          className={`absolute max-w-16 whitespace-nowrap text-wrap rounded bg-[#222] px-2 py-1 text-sm text-white shadow-lg md:max-w-sm ${tooltipPositions[position]}`}
+          className={classNames(
+            "absolute max-w-16 whitespace-nowrap text-wrap rounded bg-[#222] px-2 py-1 text-sm text-white shadow-lg md:max-w-sm",
+            tooltipPositions[position],
+          )}
           onMouseEnter={showTooltip}
           onMouseLeave={hideTooltip}
         >

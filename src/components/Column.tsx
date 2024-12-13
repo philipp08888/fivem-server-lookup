@@ -8,21 +8,21 @@ import { Tag } from "./Tag";
 interface ColumnProps {
   name: string;
   value: string | number;
-  tooltip?: ReactNode;
+  tooltipText?: ReactNode;
 }
 
 export const Column = ({
   name,
   value,
-  tooltip,
+  tooltipText,
 }: ColumnProps): React.JSX.Element => {
   return (
     <div className="flex flex-col">
       <Tag>{name}</Tag>
       <div className="flex flex-row gap-1">
         {value}
-        {isDefined(tooltip) && (
-          <InformativeTooltip>{tooltip}</InformativeTooltip>
+        {isDefined(tooltipText) && (
+          <InformativeTooltip>{tooltipText}</InformativeTooltip>
         )}
       </div>
     </div>

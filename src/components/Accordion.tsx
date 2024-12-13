@@ -2,14 +2,22 @@
 
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { motion } from "motion/react";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import {
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 interface AccordionProps {
   title: ReactNode;
-  children: ReactNode;
 }
 
-export const Accordion = ({ title, children }: AccordionProps) => {
+export const Accordion = ({
+  title,
+  children,
+}: PropsWithChildren<AccordionProps>) => {
   const [isOpen, setOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);

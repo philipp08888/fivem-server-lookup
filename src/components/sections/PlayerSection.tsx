@@ -2,11 +2,11 @@
 
 import { getPingColor } from "@/src/functions/getPingColor";
 import { ServerDataPlayer } from "@/src/types/ServerDataPlayer";
+import { memo } from "react";
 import { Accordion } from "../Accordion";
 import { Container } from "../layout/Container";
 import { PaginationList } from "../PaginationList";
 import { Tag } from "../Tag";
-import { memo } from "react";
 
 export const PlayerSection = memo(
   ({ players }: { players: ServerDataPlayer[] }) => {

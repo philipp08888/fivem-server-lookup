@@ -114,7 +114,7 @@ const Page = async ({ params }: LookupPageProps) => {
             <Column
               name="Upvotes"
               value={data.upvotePower}
-              tooltip={getUpvoteTooltip(data.upvotePower, 5.95)}
+              tooltipText={getUpvoteTooltip(data.upvotePower, 5.95)}
             />
             <Column name="Bursts" value={data.burstPower} />
 

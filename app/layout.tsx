@@ -5,7 +5,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import "react-tippy/dist/tippy.css";
 import "./globals.css";
 
 const poppins = Poppins({
