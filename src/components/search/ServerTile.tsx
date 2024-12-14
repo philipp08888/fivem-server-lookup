@@ -2,6 +2,7 @@
 
 import { TEST_IDS } from "@/src/functions/testIds";
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
+import classNames from "classnames";
 import Image from "next/image";
 import { formatToHTMLColor } from "../../functions/formatToHTMLColor";
 
@@ -20,7 +21,13 @@ export const ServerTile = ({
 }: ServerTileProps): React.JSX.Element => {
   return (
     <div
-      className={`flex w-full cursor-pointer flex-row justify-between gap-4 rounded-md p-2 transition-colors duration-200 ease-in-out ${isFocused ? "bg-[#444]" : "bg-transparent"} hover:bg-[#444]`}
+      className={classNames(
+        "flex w-full cursor-pointer flex-row justify-between gap-4 rounded-md p-2 transition-colors duration-200 ease-in-out hover:bg-[#444]",
+        {
+          "bg-[#444]": isFocused,
+          "bg-transparent": !isFocused,
+        },
+      )}
       onClick={onClick}
       data-testid={TEST_IDS.RESULTS.SERVER_TILE(hostname)}
     >
