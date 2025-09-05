@@ -1,9 +1,11 @@
+"use server";
+
 import z from "zod";
 import axios, { AxiosInstance } from "axios";
 import { Result } from "@philipp08888/utils";
 import { $ZodIssue } from "zod/v4/core";
 
-export const CfxApiSchema = z.object({
+const CfxApiSchema = z.object({
   EndPoint: z.string(),
   Data: z.object({
     clients: z.number().nonnegative(),
