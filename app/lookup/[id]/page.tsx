@@ -6,7 +6,6 @@ import { Container } from "@/src/components/layout/Container";
 import { PlayerSection } from "@/src/components/sections/PlayerSection";
 import { ResourceSection } from "@/src/components/sections/ResourceSection";
 import { Tag } from "@/src/components/Tag";
-import fetchDataFromAPI from "@/src/functions/fetchDataFromAPI";
 import { formatToHTMLColor } from "@/src/functions/formatToHTMLColor";
 import { getFlagEmoji } from "@/src/functions/getFlagEmoji";
 import { getUpvoteTooltip } from "@/src/functions/getUpvoteTooltip";
@@ -16,6 +15,7 @@ import upsertServer from "@/src/functions/upsertServer";
 import { PlayIcon } from "@heroicons/react/24/outline";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CfxApiClient } from "@/src/clients/CfxApiClient";
 
 interface LookupPageProps {
   params: Promise<{ id: string }>;
@@ -32,13 +32,16 @@ export async function generateMetadata({
     };
   }
 
-  const data = await fetchDataFromAPI(id);
+  const cfxApiClient = new CfxApiClient();
+  const serverDataResult = await cfxApiClient.getServerInformation(id);
 
-  if (!data) {
+  if (serverDataResult.isFailure()) {
     return {
       title: `Unknown | FiveM Server Lookup`,
     };
   }
+
+  const { Data: data } = serverDataResult.value;
 
   return {
     title: `${sanitizeColorCodes(data.hostname)} | FiveM Server Lookup`,
@@ -48,11 +51,15 @@ export async function generateMetadata({
 
 const Page = async ({ params }: LookupPageProps) => {
   const id = (await params).id;
-  const data = await fetchDataFromAPI(id);
+  const cfxApiClient = new CfxApiClient();
+  const serverDataResult = await cfxApiClient.getServerInformation(id);
 
-  if (!data) {
+  if (serverDataResult.isFailure()) {
     notFound();
+    return;
   }
+
+  const { Data: data } = serverDataResult.value;
 
   if (data.vars.lookup !== undefined && data.vars.lookup) {
     return <Error message="Lookups for this server are disabled." />;
