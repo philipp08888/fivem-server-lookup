@@ -18,7 +18,7 @@ import { notFound } from "next/navigation";
 import { CfxApiClient } from "@/src/clients/CfxApiClient";
 
 interface LookupPageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export async function generateMetadata({
