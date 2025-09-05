@@ -34,15 +34,27 @@ const CfxApiSchema = z.object({
 export type CfxApi = z.infer<typeof CfxApiSchema>;
 export type CfxApiPlayer = CfxApi["Data"]["players"][number];
 
+export type CfxApiViolation = {
+  path: string;
+  message: string;
+};
+
 export class CfxApiValidationError extends Error {
-  public readonly violations: Array<$ZodIssue>;
+  public readonly violations: Array<CfxApiViolation>;
 
   public constructor(message: string, violations: Array<$ZodIssue> = []) {
     super(message);
     this.name = "CfxApiValidationError";
-    this.violations = violations;
+    this.violations = this.makeViolations(violations);
 
     Object.setPrototypeOf(this, CfxApiValidationError.prototype);
+  }
+
+  private makeViolations(input: Array<$ZodIssue>): Array<CfxApiViolation> {
+    return input.map((issue) => ({
+      message: issue.message,
+      path: issue.path.join("."),
+    }));
   }
 }
 
