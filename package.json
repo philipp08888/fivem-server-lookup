@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@philipp08888/utils": "^1.2.0",
     "@prisma/client": "^6.0.0",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.2.0",
@@ -20,7 +21,9 @@
     "next": "15.5.2",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "xss": "^1.0.15"
+    "undici": "^7.15.0",
+    "xss": "^1.0.15",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
