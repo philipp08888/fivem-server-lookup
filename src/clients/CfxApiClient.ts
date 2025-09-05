@@ -1,5 +1,3 @@
-"use server";
-
 import z from "zod";
 import axios, { AxiosInstance } from "axios";
 import { Result } from "@philipp08888/utils";
