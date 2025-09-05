@@ -74,19 +74,23 @@ export class CfxApiClient {
 
   public async getServerInformation(
     serverId: string,
-  ): Promise<Result<CfxApiValidationError, CfxApi>> {
-    const response = await this.client.get(`servers/single/${serverId}`);
-    const validatedResponse = CfxApiSchema.safeParse(response.data);
+  ): Promise<Result<CfxApiValidationError | Error, CfxApi>> {
+    try {
+      const response = await this.client.get(`servers/single/${serverId}`);
+      const validatedResponse = CfxApiSchema.safeParse(response.data);
 
-    if (validatedResponse.error) {
-      return Result.failure(
-        new CfxApiValidationError(
-          "Error while validating server data against schema",
-          validatedResponse.error.issues,
-        ),
-      );
+      if (validatedResponse.error) {
+        return Result.failure(
+          new CfxApiValidationError(
+            "Error while validating server data against schema",
+            validatedResponse.error.issues,
+          ),
+        );
+      }
+
+      return Result.success(validatedResponse.data);
+    } catch {
+      return Result.failure(new Error("Error while retrieving server data"));
     }
-
-    return Result.success(validatedResponse.data);
   }
 }
