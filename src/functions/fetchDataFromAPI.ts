@@ -4,6 +4,7 @@ import { ServerData } from "@/src/types/ServerData";
 
 /**
  *
+ * @deprecated
  * @param query cfx server id of the server
  * @returns returns data object of server relevant details
  */
