@@ -12,10 +12,10 @@ import { getUpvoteTooltip } from "@/src/functions/getUpvoteTooltip";
 import { isDefined } from "@/src/functions/isDefined";
 import { sanitizeColorCodes } from "@/src/functions/sanitizeColorCodes";
 import upsertServer from "@/src/functions/upsertServer";
-import { PlayIcon } from "@heroicons/react/24/outline";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CfxApiClient } from "@/src/clients/CfxApiClient";
+import { PlayButton } from "@/src/components/PlayButton";
 
 interface LookupPageProps {
   params: Promise<{ id: string }>;
@@ -165,9 +165,7 @@ const Page = async ({ params }: LookupPageProps) => {
                       className="flex flex-row items-center gap-2 rounded-md bg-[#444] px-2 py-1"
                     >
                       <p className="text-sm">{endPoint}</p>
-                      <a href={`fivem://${endPoint}`} title="Connect to server">
-                        <PlayIcon className="size-5 text-primary [&>path]:stroke-[2]" />
-                      </a>
+                      <PlayButton endpointUrl={endPoint} />
                     </li>
                   ))}
                 </ul>
