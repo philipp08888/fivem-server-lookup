@@ -33,6 +33,7 @@ const CfxApiSchema = z.object({
 
 export type CfxApi = z.infer<typeof CfxApiSchema>;
 export type CfxApiPlayer = CfxApi["Data"]["players"][number];
+export type CfxApiResource = CfxApi["Data"]["resources"][number];
 
 export type CfxApiViolation = {
   path: string;

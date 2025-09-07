@@ -1,14 +1,14 @@
 "use client";
 
-import { ServerData } from "@/src/types/ServerData";
 import { Accordion } from "../Accordion";
 import { Container } from "../layout/Container";
 import { PaginationList } from "../PaginationList";
 import { Tag } from "../Tag";
 import { memo } from "react";
+import { CfxApiResource } from "@/src/clients/CfxApiClient";
 
 interface ResourceSectionProps {
-  resources: ServerData["resources"];
+  resources: Array<CfxApiResource>;
 }
 
 export const ResourceSection = memo(({ resources }: ResourceSectionProps) => {
