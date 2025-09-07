@@ -1,15 +1,15 @@
 "use client";
 
 import { getPingColor } from "@/src/functions/getPingColor";
-import { ServerDataPlayer } from "@/src/types/ServerDataPlayer";
 import { memo } from "react";
 import { Accordion } from "../Accordion";
 import { Container } from "../layout/Container";
 import { PaginationList } from "../PaginationList";
 import { Tag } from "../Tag";
+import { CfxApiPlayer } from "@/src/clients/CfxApiClient";
 
 export const PlayerSection = memo(
-  ({ players }: { players: ServerDataPlayer[] }) => {
+  ({ players }: { players: CfxApiPlayer[] }) => {
     return (
       <Container className="gap-2 px-8 py-4">
         <Accordion title={<Tag>Players ({players.length})</Tag>}>
