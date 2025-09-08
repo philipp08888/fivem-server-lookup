@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "jest",
     "prisma:generate": "prisma generate",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "prisma:db:push": "prisma db push"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
