@@ -34,7 +34,7 @@ FiveM Server Lookup is an open-source project that enriches publicly available F
 ## Local Setup
 
 ### Requirements:
-- Node.JS
+- Node.js
 - Docker
 
 1. **Clone the repository**
@@ -50,7 +50,7 @@ cd fivem-server-lookup
 npm install --legacy-peer-deps
 ```
 
-3. **Set up environment variables & PostgreSQL db**
+3. **Set up environment variables & PostgreSQL database**
 
 ```bash
 cp .env.example .env
