@@ -50,6 +50,7 @@ cd fivem-server-lookup
 npm install --legacy-peer-deps
 ```
 
+> **Note:** The `--legacy-peer-deps` flag is used due to known peer dependency conflicts between some packages (e.g., React, Next.js, and certain testing or linting tools). This flag allows installation to proceed by disabling strict peer dependency resolution in npm v7 and above. We recommend monitoring dependency updates and removing this flag once the conflicts are resolved. For more details, see [npm documentation](https://docs.npmjs.com/cli/v7/using-npm/config#legacy-peer-deps).
 3. **Set up environment variables & PostgreSQL database**
 
 ```bash
