@@ -7,18 +7,16 @@ export function getUpvoteTooltip(
 ): React.JSX.Element {
   return (
     <>
-      An upvote costs {upvotePrice}€ (
+      Each upvote costs {formatEuro(upvotePrice)} (
       <Link
         className="text-blue-500"
         href="https://zap-hosting.com/en/shop/product/fivem-upvotes/"
       >
-        zap-hosting.com
+        Zap Hosting
       </Link>
-      )
-      <br />
-      <br />
-      {upvotes} Upvotes x {upvotePrice}€ ={" "}
-      {formatEuro(Math.round(upvotes * upvotePrice))})
+      ) as of September 2025. <br /> <br />
+      {upvotes} upvotes × {formatEuro(upvotePrice)} ={" "}
+      {formatEuro(Math.round(upvotes * upvotePrice))}
     </>
   );
 }
