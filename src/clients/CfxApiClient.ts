@@ -1,8 +1,12 @@
 import { Agent, request } from "undici";
 import z from "zod";
 import { Result } from "@philipp08888/utils";
-import { $ZodIssue } from "zod/v4/core";
 import { defaultClientHeaders } from "@/src/constants/defaultClientHeaders";
+import {
+  parseAndValidateResponse,
+  ParsingError,
+  ValidationError,
+} from "@/src/functions/parseAndValidateResponse";
 
 const CfxApiSchema = z.object({
   EndPoint: z.string(),
@@ -40,25 +44,6 @@ export type CfxApiViolation = {
   message: string;
 };
 
-export class CfxApiValidationError extends Error {
-  public readonly violations: Array<CfxApiViolation>;
-
-  public constructor(message: string, violations: Array<$ZodIssue> = []) {
-    super(message);
-    this.name = "CfxApiValidationError";
-    this.violations = this.makeViolations(violations);
-
-    Object.setPrototypeOf(this, CfxApiValidationError.prototype);
-  }
-
-  private makeViolations(input: Array<$ZodIssue>): Array<CfxApiViolation> {
-    return input.map((issue) => ({
-      message: issue.message,
-      path: issue.path.join("."),
-    }));
-  }
-}
-
 export class CfxApiClient {
   private readonly agent: Agent;
   private readonly baseURL = "https://servers-frontend.fivem.net/api/";
@@ -78,9 +63,9 @@ export class CfxApiClient {
 
   public async getServerInformation(
     serverId: string,
-  ): Promise<Result<CfxApiValidationError | Error, CfxApi>> {
+  ): Promise<Result<ValidationError | ParsingError | Error, CfxApi>> {
     try {
-      const { body } = await request(this.makeRequestUrl(serverId), {
+      const response = await request(this.makeRequestUrl(serverId), {
         method: "GET",
         headers: {
           ...defaultClientHeaders,
@@ -92,19 +77,21 @@ export class CfxApiClient {
         headersTimeout: 10_000,
       });
 
-      const bodyJson = await body.json();
-      const validatedResponse = CfxApiSchema.safeParse(bodyJson);
+      const parseResult = await parseAndValidateResponse(
+        response,
+        CfxApiSchema,
+        {
+          parsingErrorMessage: "Failed to parse JSON response from CFX API",
+          validationErrorMessage:
+            "CFX API response does not match expected server data format",
+        },
+      );
 
-      if (validatedResponse.error) {
-        return Result.failure(
-          new CfxApiValidationError(
-            "Error while validating server data against schema",
-            validatedResponse.error.issues,
-          ),
-        );
+      if (parseResult.isFailure()) {
+        return Result.failure(parseResult.error);
       }
 
-      return Result.success(validatedResponse.data);
+      return Result.success(parseResult.value);
     } catch (error) {
       return Result.failure(
         new Error(

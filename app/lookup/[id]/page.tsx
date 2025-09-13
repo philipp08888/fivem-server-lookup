@@ -16,6 +16,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CfxApiClient } from "@/src/clients/CfxApiClient";
 import { PlayButton } from "@/src/components/PlayButton";
+import { ServerApiClient } from "@/src/clients/ServerApiClient";
 
 interface LookupPageProps {
   params: Promise<{ id: string }>;
@@ -53,6 +54,8 @@ export async function generateMetadata({
 const Page = async ({ params }: LookupPageProps) => {
   const id = (await params).id;
   const cfxApiClient = new CfxApiClient();
+  const serverApiClient = new ServerApiClient();
+
   const serverDataResult = await cfxApiClient.getServerInformation(id);
 
   if (serverDataResult.isFailure()) {
@@ -61,6 +64,13 @@ const Page = async ({ params }: LookupPageProps) => {
   }
 
   const { Data: data } = serverDataResult.value;
+  const serverPlayerResult = await serverApiClient.getPlayers(
+    data.connectEndPoints.at(0) ?? "",
+  );
+
+  const players = serverPlayerResult.isSuccess()
+    ? serverPlayerResult.value
+    : serverDataResult.value.Data.players;
 
   if (data.vars.lookup !== undefined && data.vars.lookup) {
     return <Error message="Lookups for this server are disabled." />;
@@ -73,6 +83,7 @@ const Page = async ({ params }: LookupPageProps) => {
   );
 
   void cfxApiClient.close();
+  void serverApiClient.close();
 
   return (
     <>
@@ -174,9 +185,7 @@ const Page = async ({ params }: LookupPageProps) => {
           )}
         </div>
       </Container>
-      {data.players && data.players.length > 0 && (
-        <PlayerSection players={data.players} />
-      )}
+      {players && players.length > 0 && <PlayerSection players={players} />}
       {data.resources && data.resources.length > 0 && (
         <ResourceSection resources={data.resources} />
       )}
