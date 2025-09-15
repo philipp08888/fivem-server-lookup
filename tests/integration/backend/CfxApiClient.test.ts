@@ -1,7 +1,9 @@
-import {
-  CfxApiClient,
-  CfxApiValidationError,
-} from "@/src/clients/CfxApiClient";
+/**
+ * @jest-environment node
+ */
+
+import { CfxApiClient } from "@/src/clients/CfxApiClient";
+import { ValidationError } from "@/src/functions/parseAndValidateResponse";
 import { Result } from "@philipp08888/utils";
 import { request } from "undici";
 
@@ -63,9 +65,9 @@ describe("CfxApiClient", () => {
     const result = await client.getServerInformation("abc123");
     expect(Result.isFailure(result)).toBe(true);
     if (Result.isFailure(result)) {
-      expect(result.error).toBeInstanceOf(CfxApiValidationError);
+      expect(result.error).toBeInstanceOf(ValidationError);
 
-      if (result.error instanceof CfxApiValidationError) {
+      if (result.error instanceof ValidationError) {
         expect(result.error.violations.length).toBeGreaterThan(0);
       }
     }
