@@ -4,7 +4,7 @@ applyTo: "**/*.ts,**/*.tsx"
 
 # Project Overview
 
-This project is a web application that allows users to see information about specific FiveM gameservers (e.g. players, resources).
+This project is a web application that allows users to see information about specific FiveM game servers (e.g. players, resources).
 It is built using Next.js, Prisma, TailwindCSS. The data is stored in a PostgreSQL database.
 
 ## Folder Structure
